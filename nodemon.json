@@ -1,4 +1,4 @@
 {
     "watch": ["src"],
-    "exec": "tsx src/server.ts"
+    "exec": "npm run migration:run && src/server.ts"
 }

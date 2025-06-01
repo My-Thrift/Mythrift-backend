@@ -43,10 +43,16 @@ export class ConflictError extends CustomError {
     }
 }
 
+export class DependencyError extends CustomError {
+    constructor(message: string, statusCode: number = 424){
+        super(message, statusCode)
+    }
+}
+
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)=>{
     if(err instanceof CustomError){
         return res.status(err.statusCode).json({status: false, message: err.message})
     }
-    console.error(err)
+  //  console.error(err)
     return res.status(500).json({ message: 'server error' })
 } 

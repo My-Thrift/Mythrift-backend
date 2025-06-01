@@ -9,6 +9,9 @@ class Transactions {
     @Column({ type: 'varchar'})
     email!: string
 
+    @Column({ type: 'varchar'})
+    userId!: string
+
     @Column({type: 'varchar'})
     firstName!: string
 
@@ -21,11 +24,11 @@ class Transactions {
     @Column({type: 'varchar'})
     reference!: string
 
-    @Column({type: 'varchar'})
-    serviceFee!: string
+    @Column({type: 'int'})
+    serviceFee!: number
 
-    @Column({type: 'varchar', nullable: true})
-    deliveryFee!: string
+    @Column({type: 'int', nullable: true})
+    deliveryFee!: number
 
     @Column({type: 'varchar', default: 'pending'})
     paymentStatus!: string

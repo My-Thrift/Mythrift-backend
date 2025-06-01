@@ -1,3 +1,5 @@
+import dotenv from 'dotenv'
+dotenv.config()
 const appConfig = {
     app: {
         name: process.env.APP_NAME as string,
@@ -11,7 +13,8 @@ const appConfig = {
         port: Number(process.env.DATABASE_PORT),
         name: process.env.DATABASE_NAME as string,
         password: process.env.DATABASE_PASSWORD as string,
-        username: process.env.DATABASE_USERNAME as string
+        username: process.env.DATABASE_USERNAME as string,
+        migration: process.env.MIGRATION_PATH as string
     },
     paystack: {
         api_key: process.env.PAYSTACK_SECRET_KEY as string,

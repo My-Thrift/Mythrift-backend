@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
-    "module": "commonjs",
+    "target": "ES2020", // or ES2020
+    "module": "commonjs", // Retain CommonJS for compatibility
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -10,7 +10,9 @@
     "rootDir": "./src",
     "typeRoots": ["./node_modules/@types", "./src/types"],
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true  
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

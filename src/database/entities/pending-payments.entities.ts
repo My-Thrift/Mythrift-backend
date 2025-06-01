@@ -17,6 +17,9 @@ class PendingPayments {
     @Column({type: "boolean", default: false})
     orderDelivered!: Boolean
 
+    @Column({type: "boolean", default: false})
+    isStockpile!: Boolean
+
     @Column({type: "date"})
     vendorAccepted!: Date
 

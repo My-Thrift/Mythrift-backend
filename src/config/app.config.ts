@@ -19,6 +19,10 @@ const appConfig = {
     paystack: {
         api_key: process.env.PAYSTACK_SECRET_KEY as string,
         base_url: process.env.PAYSTACK_BASE_URL as string
+    },
+    cloud: {
+        cloud_url: process.env.CLOUD_URL as string,
+        cloud_secret: process.env.CLOUD_SECRET_KEY as string
     }
 }
 

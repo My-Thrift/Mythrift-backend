@@ -11,10 +11,9 @@ export const getPaystackBalance = async()=>{
                 }
             }
         )
-        if(response.data.status === "true") return response.data.data[0].balance/100
+       return response.data.data[0].balance/100
     } catch (error) {
         throw error
     }
 }
-
 export default getPaystackBalance

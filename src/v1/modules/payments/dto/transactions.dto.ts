@@ -1,7 +1,7 @@
 import { IsArray, IsBoolean, IsEmail, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, Length } from 'class-validator'
 
 
-export class InitPaymentDto {
+export class TransactionsDto {
 
     @IsString()
     @Length(28,28)

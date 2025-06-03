@@ -1,6 +1,6 @@
 import { IsIn, IsString } from "class-validator";
 
-export class AcceptOrderDto {
+export class VendorDecisionDto {
 
     @IsString()
     orderReference!: string
@@ -9,7 +9,7 @@ export class AcceptOrderDto {
     vendorId!: string
 
     @IsString()
-    @IsIn(['success', 'pending', 'declined'])
+    @IsIn(['accepted', 'declined'])
     vendorStatus!: string
 
     @IsString()

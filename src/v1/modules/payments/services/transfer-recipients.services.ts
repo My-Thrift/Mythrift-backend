@@ -10,6 +10,22 @@ import TransferRecipientDatasource from "../datasource/transfer-recipients.datas
 @injectable()
 class TransferRecipientsServices {
     constructor(@inject(TransferRecipientDatasource) private transferRecipientDatasource: TransferRecipientDatasource){}
+    async resolveAccount(data: {accountNumber: string, bankCode: string}){
+        try {
+            const {accountNumber, bankCode} = data
+            const response = await axios.get(`${appConfig.paystack.base_url}/bank/resolve?account_number=${accountNumber}&bank_code=${bankCode}`,
+                { 
+                    headers: {
+                        'Authorization': `Bearer ${appConfig.paystack.api_key}`
+                    }
+                }
+            )
+            return response.data
+        } catch (error) {
+            throw error
+        }
+    }
+
     async createRecipient(data: TransferRecipientsDto){
         try {
             const recipientExist = await this.transferRecipientDatasource.findRecipient(data.accountNumber)
@@ -39,7 +55,6 @@ class TransferRecipientsServices {
             newRecipient.recipientCode = response.data.data.recipient_code
             newRecipient.additionalInfo = response.data
             return await this.transferRecipientDatasource.createRecipient(newRecipient)
-            
         } catch (error) {
             throw error
         }

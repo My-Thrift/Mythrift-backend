@@ -3,7 +3,7 @@ import express, { Application } from 'express'
 import appVersion from './config/app-version.config'
 import healthRouter from './v1/modules/health/route/health.route'
 import { errorHandler } from './shared/middleware/error-handler.middleware'
-import initPaymentRouter from './v1/modules/payments/routes/init-payment.routes'
+import initPaymentRouter from './v1/modules/payments/routes/transactions.routes'
 import transferrecipientRouter from './v1/modules/payments/routes/transfer-recipients.routes'
 
 const app: Application = express()

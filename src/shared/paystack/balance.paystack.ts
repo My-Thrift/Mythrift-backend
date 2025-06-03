@@ -2,7 +2,7 @@ import axios from "axios";
 import appConfig from "../../config/app.config";
 
 
-export const checkPaystackBalance = async()=>{
+export const getPaystackBalance = async()=>{
     try {
         const response = await axios.get(`${appConfig.paystack.base_url}/balance`,
             {
@@ -11,10 +11,10 @@ export const checkPaystackBalance = async()=>{
                 }
             }
         )
-        if(response.data.status === "true") return response.data.data[0].balance
+        if(response.data.status === "true") return response.data.data[0].balance/100
     } catch (error) {
         throw error
     }
 }
 
-export default checkPaystackBalance
+export default getPaystackBalance

@@ -12,5 +12,5 @@ const transferRecipientController = container.resolve(TransferRecipientControlle
 
 transferrecipientRouter
 .post(`/transfer-recipient`, requestValidator(TransferRecipientsDto), transferRecipientController.createRecipient.bind(transferRecipientController))
-
+.get('/resolve-account', transferRecipientController.resolveAccount.bind(transferRecipientController))
 export default transferrecipientRouter

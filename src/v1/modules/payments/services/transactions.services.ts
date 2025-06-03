@@ -1,15 +1,15 @@
 import { inject, injectable } from "tsyringe";
-import { InitPaymentDto } from "../dto/init-payment.dto";
+import { TransactionsDto } from "../dto/transactions.dto";
 import uuidGenerator from "../../../../shared/utils/uuid.utils";
 import axios from 'axios'
 import appConfig from "../../../../config/app.config";
 import { DependencyError } from "../../../../shared/middleware/error-handler.middleware";
-import InitPaymentDatasource from "../datasource/init-payment.datasource";
+import TransactionsDatasource from "../datasource/transactions.datasource";
 
 @injectable()
-class InitPaymentService {
-    constructor(@inject(InitPaymentDatasource) private initPaymentDatasource: InitPaymentDatasource){}
-    async initPayment(data: InitPaymentDto) {
+class TransactionsService {
+    constructor(@inject(TransactionsDatasource) private transactionsDatasource: TransactionsDatasource){}
+    async initPayment(data: TransactionsDto) {
         try {
             const { amount, email, firstName, lastName} = data
             const reference = uuidGenerator()
@@ -23,7 +23,7 @@ class InitPaymentService {
             }
             )
             if(!response) throw new DependencyError('Paystack Error: Error initializing payment')
-            await this.initPaymentDatasource.initPayment({...data, reference: reference, paymentStatus: 'pending', vendorStatus: 'pending', orderDelivered: false})
+            await this.transactionsDatasource.initPayment({...data, reference: reference, paymentStatus: 'pending', vendorStatus: 'pending', orderDelivered: false})
             return response.data
         } catch (error) {
             throw error
@@ -31,4 +31,4 @@ class InitPaymentService {
     }
 }
 
-export default InitPaymentService
+export default TransactionsService

@@ -1,7 +1,7 @@
 import { IsString, Length } from "class-validator"
 
 
-class TransferRecipientsDto {
+export class TransferRecipientsDto {
 
     @IsString()
     name!: string 

@@ -29,6 +29,17 @@ class TransactionsService {
             throw error
         }
     }
+    async updateSuccessfulPaymentStatus(data: any){
+        try {
+            const update = await this.transactionsDatasource.updateSuccessfulPaymentStatus(data.reference)
+            const payload = {
+                event: 'charge.success',
+                data: update
+            }
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 export default TransactionsService

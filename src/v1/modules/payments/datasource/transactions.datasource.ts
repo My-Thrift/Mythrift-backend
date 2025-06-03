@@ -23,6 +23,9 @@ class TransactionsDatasource {
     async saveRefundDetails(data: Refunds){
         return await this.refundsRepository.save(data)
     }
+    async updateSuccessfulPaymentStatus(reference: string){
+        await this.transactionsRepository.update({reference}, {paymentStatus: "success"})
+    }
 }
 
 export default TransactionsDatasource

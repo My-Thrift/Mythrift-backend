@@ -5,6 +5,7 @@ import axios from 'axios'
 import appConfig from "../../../../config/app.config";
 import { DependencyError } from "../../../../shared/middleware/error-handler.middleware";
 import TransactionsDatasource from "../datasource/transactions.datasource";
+import { generateSignature } from "../../../../shared/cloud/signature.cloud";
 
 @injectable()
 class TransactionsService {
@@ -32,10 +33,21 @@ class TransactionsService {
     async updateSuccessfulPaymentStatus(data: any){
         try {
             const update = await this.transactionsDatasource.updateSuccessfulPaymentStatus(data.reference)
+            console.log(update)
             const payload = {
                 event: 'charge.success',
                 data: update
             }
+            const signature = generateSignature(JSON.stringify(payload))
+            await axios.post(appConfig.cloud.cloud_url, 
+                payload,
+                {
+                    headers:{
+                        "x-mythrift": signature,
+                        'Content-Type': 'application/json',
+                    }
+                }
+            )
         } catch (error) {
             throw error
         }

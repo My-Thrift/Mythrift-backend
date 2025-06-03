@@ -25,6 +25,7 @@ class TransactionsDatasource {
     }
     async updateSuccessfulPaymentStatus(reference: string){
         await this.transactionsRepository.update({reference}, {paymentStatus: "success"})
+        return await this.transactionsRepository.findOne({ where : {reference}})
     }
 }
 

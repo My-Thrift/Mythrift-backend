@@ -3,7 +3,8 @@ dotenv.config()
 const appConfig = {
     app: {
         name: process.env.APP_NAME as string,
-        environment: process.env.NODE_ENV || 'development'
+        environment: process.env.NODE_ENV || 'development',
+        apiKey: process.env.API_KEY as string
     },
     server: {
         port: Number(process.env.PORT) || 3000

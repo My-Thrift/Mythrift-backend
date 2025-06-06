@@ -1,17 +1,21 @@
 import { injectable } from "tsyringe";
-import { Repository } from "typeorm";
+import { Between, Repository } from "typeorm";
 import Transactions from "../../../../database/entities/transactions.entities";
 import { AppDatasource } from "../../../../database";
 import Refunds from "../../../../database/entities/refunds.entities";
+import Transfers from "../../../../database/entities/transfers.entities";
 
 
 @injectable()
 class TransactionsDatasource {
     private transactionsRepository: Repository<Transactions>
     private refundsRepository: Repository<Refunds>
+    private transfersRepository: Repository<Transfers>
+
     constructor(){
         this.transactionsRepository = AppDatasource.getRepository(Transactions)
         this.refundsRepository = AppDatasource.getRepository(Refunds)
+        this.transfersRepository = AppDatasource.getRepository(Transfers)
     }
     async initPayment(data: any){
         const create =  this.transactionsRepository.create(data)
@@ -40,6 +44,20 @@ class TransactionsDatasource {
         await this.transactionsRepository.update({reference}, {orderDelivered})
         return await this.transactionsRepository.findOne({where:{reference}})
     }
+    async getTransactionHistory(vendorId: string, startDate: Date, endDate: Date) {
+        return await this.transfersRepository
+          .createQueryBuilder("transfers")
+          .where("transfers.vendorId = :vendorId", { vendorId })
+          .andWhere(
+            `transfers."additionalInfo"->>'transferred_at' BETWEEN :start AND :end`,
+            {
+              start: startDate.toISOString(),
+              end:   endDate.toISOString(),
+            }
+          )
+          .getMany();
+      }
+      
 }
 
 export default TransactionsDatasource

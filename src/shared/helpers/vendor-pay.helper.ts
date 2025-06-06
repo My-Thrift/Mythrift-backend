@@ -61,6 +61,23 @@ class VendorPay {
             throw error
         }
     }
+    async getTransactionHistory(vendorId: string, startDate: Date, endDate: Date){
+        try {
+            let paymentData = []
+            const payments =  await this.transactionsDatasource.getTransactionHistory(vendorId, startDate, endDate)
+            for(let i = 0; i<payments.length; i++){
+                const data = {
+                    amount: payments[i].additionalInfo.amount,
+                    reference: payments[i].additionalInfo.reference,
+                    transferredAt: payments[i].additionalInfo.transferred_at
+                }
+                paymentData.push(data)
+            }
+            return paymentData
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 export default VendorPay

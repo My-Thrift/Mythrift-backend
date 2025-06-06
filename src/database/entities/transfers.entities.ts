@@ -24,7 +24,7 @@ class Transfers {
     @Column({type: 'varchar'})
     percentagePaid!: string
 
-    @Column({ type: 'jsonb', nullable: true})
+    @Column({ name: "additionalInfo", type: 'jsonb', nullable: true})
     additionalInfo!: any
 
     @CreateDateColumn()

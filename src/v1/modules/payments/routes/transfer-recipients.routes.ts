@@ -3,6 +3,7 @@ import { container } from 'tsyringe'
 import TransferRecipientController from '../controllers/transfer-recipients.controllers'
 import requestValidator from '../../../../shared/middleware/req-validator.middleware'
 import TransferRecipientsDto from '../dto/transfer-recipients.dto'
+import { authMiddleware } from '../../../../shared/middleware/auth.middleware'
 const transferrecipientRouter = express.Router()
 
 
@@ -11,6 +12,6 @@ const transferRecipientController = container.resolve(TransferRecipientControlle
 
 
 transferrecipientRouter
-.post(`/transfer-recipient`, requestValidator(TransferRecipientsDto), transferRecipientController.createRecipient.bind(transferRecipientController))
-.get('/resolve-account', transferRecipientController.resolveAccount.bind(transferRecipientController))
+.post(`/transfer-recipient`, [authMiddleware,requestValidator(TransferRecipientsDto)], transferRecipientController.createRecipient.bind(transferRecipientController))
+.get('/resolve-account', authMiddleware, transferRecipientController.resolveAccount.bind(transferRecipientController))
 export default transferrecipientRouter

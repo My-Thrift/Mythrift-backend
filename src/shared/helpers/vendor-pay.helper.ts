@@ -4,6 +4,7 @@ import TransactionsDatasource from "../../v1/modules/payments/datasource/transac
 import TransferRecipientController from "../../v1/modules/payments/controllers/transfer-recipients.controllers";
 import TransferRecipientDatasource from "../../v1/modules/payments/datasource/transfer-recipients.datasource";
 import TransferService from "../../v1/modules/payments/services/transfer.services";
+import { NotFoundError } from "../middleware/error-handler.middleware";
 
 @injectable()
 class VendorPay {
@@ -45,6 +46,18 @@ class VendorPay {
             }
         } catch (error) {
             //console.log(error)
+            throw error
+        }
+    }
+    async getPayPercentages(vendorId: string, reference: string){
+        try {
+            const transaction = await this.transactionsDatasource.findPaymentByRefrenceAndVendor(reference, vendorId)
+            if(!transaction) throw new NotFoundError('Transactions does not exist')
+            const { amount }= transaction
+            const sixtyPercent = amount*0.6
+            const fortyPercent = amount - sixtyPercent
+            return {"sixty-percent": sixtyPercent, "forty-percent": fortyPercent}
+        } catch (error) {
             throw error
         }
     }

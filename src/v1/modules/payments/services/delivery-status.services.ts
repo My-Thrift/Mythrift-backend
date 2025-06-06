@@ -20,6 +20,7 @@ class DeliveryStatusService {
             const transaction = await this.transactionsDatasource.findPaymentByRefrenceAndVendor(reference, vendorId)
             if(!transaction) throw new NotFoundError('Transaction not found')
             
+            if(transaction.vendorStatus !== 'accepted') throw new ForbidenError('You cannot perform this action')
             if(transaction.orderDelivered) throw new ForbidenError('This action has already been taking')
             await this.vendorDecisionDatasource.updateDeliveryStatus(reference, status)
             return await this.transactionsDatasource.updateDeliveryStatus(reference, status)

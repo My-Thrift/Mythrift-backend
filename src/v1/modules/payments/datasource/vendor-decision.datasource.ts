@@ -31,6 +31,9 @@ class VendorDecisionDatasource {
     async updateDeliveryStatus(reference: string, orderDelivered: Boolean){
         await this.pendingPayRepository.update({orderReference: reference}, {orderDelivered})
     }
+    async getPendingPayByReference(vendorId: string, reference: string){
+        return await this.pendingPayRepository.findOne({ where:{vendorId, orderReference:reference}})
+    }
 }
 
 export default VendorDecisionDatasource

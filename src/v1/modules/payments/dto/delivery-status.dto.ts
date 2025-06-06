@@ -1,11 +1,15 @@
-import { IsBoolean, IsString } from "class-validator";
+import { IsBoolean, IsIn, isString, IsString } from "class-validator";
 
 
 
 export class DeliveryStatusDto {
     @IsBoolean()
-    delivered!: Boolean
+    @IsIn([true])
+    status!: Boolean
 
     @IsString()
-    orderId!: string // compa
+    orderReference!: string // compa
+
+    @IsString()
+    vendorId!: string
 }

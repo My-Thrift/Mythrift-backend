@@ -1,4 +1,4 @@
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { VendorDecisionDto } from "../dto/vendor-decision.dto";
 import TransactionsDatasource from "../datasource/transactions.datasource";
 import { ForbidenError, NotFoundError } from "../../../../shared/middleware/error-handler.middleware";
@@ -6,14 +6,15 @@ import refundTransaction from "../../../../shared/paystack/refunds.paystack";
 import Refunds from "../../../../database/entities/refunds.entities";
 import moment from 'moment-timezone'
 import PendingPayments from "../../../../database/entities/pending-payments.entities";
-import { calculateVendorPayDate } from "../../../../shared/helpers/vendor-pay-date.helper";
+import VendorPayDateHelper from "../../../../shared/helpers/vendor-pay-date.helper";
 import VendorDecisionDatasource from "../datasource/vendor-decision.datasource";
 
 @injectable()
 class VendorDecisionService {
     constructor(
         @inject(TransactionsDatasource) private transactionsDatasource: TransactionsDatasource,
-        @inject(VendorDecisionDatasource) private vendorDecisionDatasource: VendorDecisionDatasource
+        @inject(VendorDecisionDatasource) private vendorDecisionDatasource: VendorDecisionDatasource,
+        @inject(VendorPayDateHelper) private vendorPayDateHelper:VendorPayDateHelper
     ){}
     async vendorDecision(data: VendorDecisionDto){
         try {
@@ -35,7 +36,7 @@ class VendorDecisionService {
             }
 
             const acceptedDate = moment().toDate()
-            const vendorPayDate = calculateVendorPayDate(acceptedDate) as Date
+            const vendorPayDate = await this.vendorPayDateHelper.calculateVendorPayDate(acceptedDate) as Date
 
             const newPendingPay = new PendingPayments()
             newPendingPay.isStockpile = findTransaction.isStockpile

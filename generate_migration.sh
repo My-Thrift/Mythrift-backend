@@ -16,3 +16,5 @@ MIGRATION_NAME=$1
 
 # Run the migration generate command with the custom migration name
 npx typeorm-ts-node-commonjs migration:generate -d ./src/database/index.ts  ./src/database/migrations/$MIGRATION_NAME
+
+# to run in terminal - ./file_name migrations name

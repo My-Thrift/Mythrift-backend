@@ -36,6 +36,10 @@ class TransactionsDatasource {
         await this.transactionsRepository.update({reference}, {paymentStatus: "success"})
         return await this.transactionsRepository.findOne({ where : {reference}})
     }
+    async updateDeliveryStatus(reference: string, orderDelivered: Boolean){
+        await this.transactionsRepository.update({reference}, {orderDelivered})
+        return await this.transactionsRepository.findOne({where:{reference}})
+    }
 }
 
 export default TransactionsDatasource

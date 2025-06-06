@@ -28,6 +28,9 @@ class VendorDecisionDatasource {
     async updatePaymentStatusInPends(reference: string, percentagePaid: string, paymentCompleted: Boolean){
         await this.pendingPayRepository.update({orderReference: reference}, {percentagePaid, paymentCompleted})
     }
+    async updateDeliveryStatus(reference: string, orderDelivered: Boolean){
+        await this.pendingPayRepository.update({orderReference: reference}, {orderDelivered})
+    }
 }
 
 export default VendorDecisionDatasource

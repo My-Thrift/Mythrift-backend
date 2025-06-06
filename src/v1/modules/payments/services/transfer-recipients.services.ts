@@ -54,6 +54,7 @@ class TransferRecipientsServices {
             newRecipient.name = data.name
             newRecipient.recipientCode = response.data.data.recipient_code
             newRecipient.additionalInfo = response.data
+            newRecipient.vendorId = data.vendorId
             return await this.transferRecipientDatasource.createRecipient(newRecipient)
         } catch (error) {
             throw error

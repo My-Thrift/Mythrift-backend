@@ -2,11 +2,17 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateCol
 
 
 
-@Entity()
+@Entity('pending_payments')
 class PendingPayments {
 
     @PrimaryGeneratedColumn('uuid')
     readonly id!: string
+
+    @Column({type: "varchar", default: 'reference'})
+    orderReference!: string
+
+    @Column({type: "varchar"})
+    vendorId!: string
 
     @Column({type: 'boolean', default: false})
     paymentCompleted!: Boolean
@@ -20,10 +26,10 @@ class PendingPayments {
     @Column({type: "boolean", default: false})
     isStockpile!: Boolean
 
-    @Column({type: "date"})
+    @Column({type: "timestamp"})
     vendorAccepted!: Date
 
-    @Column({type: "date"})
+    @Column({type: "timestamp"})
     vendorPayDate!: Date
 
     @CreateDateColumn()

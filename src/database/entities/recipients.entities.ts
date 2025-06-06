@@ -15,6 +15,9 @@ class Recipients {
     @Column({type: 'varchar'})
     recipientCode!: string
 
+    @Column({type: 'varchar'})
+    vendorId!: string
+
     @Column({type: "varchar"})
     accountNumber!: string
 

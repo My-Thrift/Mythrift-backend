@@ -27,6 +27,7 @@ export const AppDatasource = new DataSource({
 ],
     logging: true,
     synchronize: false,
+    dropSchema: false,
     migrations: [appConfig.database.migration],
 
 })

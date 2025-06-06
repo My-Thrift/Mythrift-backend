@@ -33,7 +33,6 @@ class TransactionsService {
     async updateSuccessfulPaymentStatus(data: any){
         try {
             const update = await this.transactionsDatasource.updateSuccessfulPaymentStatus(data.reference)
-            console.log(update)
             const payload = {
                 event: 'charge.success',
                 data: update
@@ -50,6 +49,13 @@ class TransactionsService {
             )
         } catch (error) {
             throw error
+        }
+    }
+    async updateRefundStatus(data: any){
+        try {
+            await this.transactionsDatasource.updateRefundStatus(data, data.transaction_reference)
+        } catch (error) {
+            
         }
     }
 }

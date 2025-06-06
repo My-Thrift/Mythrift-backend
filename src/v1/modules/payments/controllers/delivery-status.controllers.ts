@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { injectable } from 'tsyringe'
 
 @injectable()
-class ClassName {
+class DeliveryStatusController {
     constructor(){}
-    async Name(req: Request, res: Response, next: NextFunction): Promise<any>{
+    async deliveryStatus(req: Request, res: Response, next: NextFunction): Promise<any>{
         try {
             
         } catch (error) {
@@ -13,4 +13,4 @@ class ClassName {
     }
 }
 
-export default ClassName
+export default DeliveryStatusController

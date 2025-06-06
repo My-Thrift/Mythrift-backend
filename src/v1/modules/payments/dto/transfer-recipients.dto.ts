@@ -12,6 +12,10 @@ export class TransferRecipientsDto {
 
     @IsString()
     bankCode!: string 
+
+    @IsString()
+    @Length(28,28)
+    vendorId!: string 
     
 }
 

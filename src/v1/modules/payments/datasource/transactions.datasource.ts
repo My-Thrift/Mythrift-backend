@@ -17,11 +17,20 @@ class TransactionsDatasource {
         const create =  this.transactionsRepository.create(data)
         await this.transactionsRepository.save(create)
     }
-    async findPaymentByRefrenceAndVendorId(reference: string, vendorId: string){
+    async findPendingPaymentByRefrenceAndVendorId(reference: string, vendorId: string){
         return await this.transactionsRepository.findOne({ where: {reference, vendorId, vendorStatus: 'pending'}})
+    }
+    async findPaymentByRefrenceAndVendor(reference: string, vendorId: string){
+        return await this.transactionsRepository.findOne({ where: {reference, vendorId}})
+    }
+    async findPaymentByReference(reference: string){
+        return await this.transactionsRepository.findOne({where: {reference}})
     }
     async saveRefundDetails(data: Refunds){
         return await this.refundsRepository.save(data)
+    }
+    async updateRefundStatus(data: any, reference: string){
+        await this.refundsRepository.update({orderReference: reference}, {additionalInfo: data})
     }
     async updateSuccessfulPaymentStatus(reference: string){
         await this.transactionsRepository.update({reference}, {paymentStatus: "success"})

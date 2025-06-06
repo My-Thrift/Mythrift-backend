@@ -7,11 +7,12 @@ import getPaystackBalance from "./balance.paystack"
 const refundTransaction = async (reference: string, amount: number)=>{
     try {
         const getBalance = await getPaystackBalance() 
+        console.log(amount)
         if(!getBalance || getBalance < amount) throw new Error('Paystack error: Insuffcient balance')
         const response = await axios.post(`${appConfig.paystack.base_url}/refund`,
             {
                 "transaction": reference,
-                "amount": amount
+                "amount": amount*100
             },
             {
                 headers: {

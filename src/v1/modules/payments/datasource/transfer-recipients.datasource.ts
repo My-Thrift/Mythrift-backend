@@ -17,6 +17,9 @@ class TransferRecipientDatasource {
     async findRecipient(accountNumber: string){
         return await this.recipientDatasource.findOne({ where:{accountNumber} })
     }
+    async findRecipientByVendorId(vendorId: string){
+        return await this.recipientDatasource.findOne({ where: {vendorId}})
+    }
 }
 
 export default TransferRecipientDatasource

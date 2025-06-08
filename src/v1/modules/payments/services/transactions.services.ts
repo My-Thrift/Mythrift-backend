@@ -6,10 +6,16 @@ import appConfig from "../../../../config/app.config";
 import { DependencyError } from "../../../../shared/middleware/error-handler.middleware";
 import TransactionsDatasource from "../datasource/transactions.datasource";
 import { generateSignature } from "../../../../shared/cloud/signature.cloud";
+import WalletDatasource from "../datasource/wallet.datasource";
+import WalletTransaction from "../../../../database/entities/wallet-transactions.entities";
+import { TransactionStatus } from "../../../../database/enums/enums.database";
 
 @injectable()
 class TransactionsService {
-    constructor(@inject(TransactionsDatasource) private transactionsDatasource: TransactionsDatasource){}
+    constructor(
+        @inject(TransactionsDatasource) private transactionsDatasource: TransactionsDatasource,
+        @inject(WalletDatasource) private walletDatasource: WalletDatasource
+    ){}
     async initPayment(data: TransactionsDto) {
         try {
             const { amount, email, firstName, lastName} = data
@@ -32,6 +38,29 @@ class TransactionsService {
     }
     async updateSuccessfulPaymentStatus(data: any){
         try {
+            if(data.metadata){
+                console.log(data)
+                const amount = data.amount/100
+                const accountNumber = data.metadata.receiver_account_number
+                const reference = data.reference
+                
+                const findTransaction = await this.walletDatasource.findWalletTransactionByReference(reference)
+                if(findTransaction) return
+
+                const findWallet =  await this.walletDatasource.findWalletByAccountNumber(accountNumber)
+                if(!findWallet) return
+
+                findWallet.walletBalance += amount
+                await this.walletDatasource.saveNewWallet(findWallet)
+
+                const newWalletTransaction = new WalletTransaction()
+                newWalletTransaction.amount = amount
+                newWalletTransaction.status = TransactionStatus.success
+                newWalletTransaction.transactionReference = reference
+                newWalletTransaction.wallet = findWallet
+
+               return await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
+            }
             const update = await this.transactionsDatasource.updateSuccessfulPaymentStatus(data.reference)
             const payload = {
                 event: 'charge.success',

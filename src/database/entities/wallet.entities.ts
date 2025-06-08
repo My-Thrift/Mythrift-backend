@@ -1,0 +1,44 @@
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import Customer from "./customer.entities";
+import walletTransactions from "./wallet-transactions.entities";
+
+
+@Entity()
+class Wallet {
+
+    @PrimaryGeneratedColumn('uuid')
+    readonly id!: string
+
+    @Column({type: 'varchar'})
+    walletId!: string
+
+    @Column({type: 'varchar'})
+    myThriftId!: string
+
+    @Column({type: 'int'})
+    walletBalance!: number
+
+    @Column({type: 'varchar'})
+    walletAccountName!: string
+
+    @Column({type: 'varchar'})
+    walletAccountNumber!: string
+
+    @Column({type: 'varchar', default: 'titan-paystack'})
+    preferredBank!: string
+
+    @OneToMany(()=> walletTransactions, transactions => transactions.wallet, { nullable: true})
+    @JoinColumn()
+    walletTransactions!: walletTransactions
+
+    @OneToOne(()=> Customer, customer=> customer.wallet, { cascade: true})
+    customer!: Customer
+
+    @CreateDateColumn()
+    createdAt!: Date
+
+    @UpdateDateColumn()
+    updatedAt!: Date
+}
+
+export default Wallet

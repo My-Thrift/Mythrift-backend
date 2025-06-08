@@ -1,0 +1,52 @@
+import { inject, injectable } from "tsyringe";
+import { CreateWalletDto } from "../dto/wallet.dto";
+import createPaystackCustomer from "../../../../shared/paystack/customer.paystack";
+import { ConflictError, DependencyError } from "../../../../shared/middleware/error-handler.middleware";
+import WalletDatasource from "../datasource/wallet.datasource";
+import createPaystackDva from "../../../../shared/paystack/dva.paystack";
+import Customer from "../../../../database/entities/customer.entities";
+import Wallet from "../../../../database/entities/wallet.entities";
+
+@injectable()
+class WalletService {
+    constructor(@inject(WalletDatasource) private walletDatasource: WalletDatasource){}
+    async createWallet(data: CreateWalletDto){
+        try {
+            const customerExist = await this.walletDatasource.customerExist(data.email)
+            if(customerExist) throw new ConflictError('Customer with this email already exist')
+
+            const createCustomer = await createPaystackCustomer(data)
+            if(!createCustomer) throw new DependencyError("Paystack error: error creating customer")
+    
+            const customerId = createCustomer.data.id
+   
+            const createDva = await createPaystackDva({customerId, preferredBank:'wema-bank'})
+            if(!createDva) throw new DependencyError('Paystack error: error creating dva')
+        
+            const newCustomer = new Customer()
+            newCustomer.customerId = customerId
+            newCustomer.email = data.email
+            newCustomer.firstName = data.firstName
+            newCustomer.lastName = data.lastName
+            newCustomer.myThriftId = data.myThriftId
+            newCustomer.phoneNumber = data.phoneNumber
+            newCustomer.customerData = createCustomer
+            const customer =  await this.walletDatasource.saveNewCustomer(newCustomer)
+
+            const newWallet =  new Wallet()
+            newWallet.customer = customer
+            newWallet.myThriftId = data.myThriftId
+            newWallet.walletAccountName = createDva.data.account_name
+            newWallet.walletBalance = 0
+            newWallet.walletId = createDva.data.id
+            newWallet.preferredBank = 'wema-bank'
+            newWallet.walletAccountNumber = createDva.data.account_number
+            return await this.walletDatasource.saveNewWallet(newWallet)
+
+        } catch (error) {
+            throw error
+        }
+    }
+}
+
+export default WalletService

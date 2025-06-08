@@ -50,14 +50,16 @@ class TransactionsService {
                 const findWallet =  await this.walletDatasource.findWalletByAccountNumber(accountNumber)
                 if(!findWallet) return
 
-                findWallet.walletBalance += amount
-                await this.walletDatasource.saveNewWallet(findWallet)
+                findWallet.balance += amount
+                await this.walletDatasource.saveWallet(findWallet)
 
                 const newWalletTransaction = new WalletTransaction()
                 newWalletTransaction.amount = amount
                 newWalletTransaction.status = TransactionStatus.success
                 newWalletTransaction.transactionReference = reference
                 newWalletTransaction.wallet = findWallet
+                newWalletTransaction.amountSlug = `+${amount}`
+                newWalletTransaction.reason = `Wallet Topup`
 
                return await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
             }

@@ -11,7 +11,7 @@ class DeliveryStatusController {
         try {
             const data = req.body as DeliveryStatusDto
             const response = await this.deliveryStatusService.deliveryStatus(data)
-            return res.status(200).json(SuccessResponse('Delivery status Updates', response))
+            return res.status(200).json(SuccessResponse('Delivery status Updated', response))
         } catch (error) {
             next(error)
         }

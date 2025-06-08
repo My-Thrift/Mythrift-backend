@@ -6,6 +6,7 @@ import WalletDatasource from "../datasource/wallet.datasource";
 import createPaystackDva from "../../../../shared/paystack/dva.paystack";
 import Customer from "../../../../database/entities/customer.entities";
 import Wallet from "../../../../database/entities/wallet.entities";
+import { hashWalletPin } from "../../../../shared/utils/hash.utils";
 
 @injectable()
 class WalletService {
@@ -33,15 +34,19 @@ class WalletService {
             newCustomer.customerData = createCustomer
             const customer =  await this.walletDatasource.saveNewCustomer(newCustomer)
 
+            const walletPin = await hashWalletPin(data.walletPin)
             const newWallet =  new Wallet()
             newWallet.customer = customer
             newWallet.myThriftId = data.myThriftId
-            newWallet.walletAccountName = createDva.data.account_name
-            newWallet.walletBalance = 0
+            newWallet.accountName = createDva.data.account_name
+            newWallet.balance = 0
             newWallet.walletId = createDva.data.id
             newWallet.preferredBank = 'wema-bank'
-            newWallet.walletAccountNumber = createDva.data.account_number
-            return await this.walletDatasource.saveNewWallet(newWallet)
+            newWallet.pendingBalance = 0
+            newWallet.accountNumber = createDva.data.account_number
+            newWallet.walletPin = walletPin
+
+            return await this.walletDatasource.saveWallet(newWallet)
 
         } catch (error) {
             throw error

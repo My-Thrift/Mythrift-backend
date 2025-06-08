@@ -8,8 +8,10 @@ import moment from 'moment-timezone'
 import PendingPayments from "../../../../database/entities/pending-payments.entities";
 import VendorPayDateHelper from "../../../../shared/helpers/vendor-pay-date.helper";
 import VendorDecisionDatasource from "../datasource/vendor-decision.datasource";
-import { VendorDecision } from "../../../../database/enums/enums.database";
+import { TransactionStatus, VendorDecision } from "../../../../database/enums/enums.database";
 import WalletDatasource from "../datasource/wallet.datasource";
+import { payoutDays } from "../../../../config/days.config";
+import WalletTransaction from "../../../../database/entities/wallet-transactions.entities";
 
 @injectable()
 class VendorDecisionService {
@@ -21,6 +23,7 @@ class VendorDecisionService {
     ){}
     async vendorDecision(data: VendorDecisionDto){
         try {
+            const today = moment().toDate()
             const {orderReference, vendorStatus, vendorId, recipientCode } = data
             const findTransaction = await this.transactionsDatasource.findPendingPaymentByRefrenceAndVendorId(orderReference, vendorId)
             if(!findTransaction) throw new NotFoundError('Transaction does not exist or action has already been taken')
@@ -39,28 +42,37 @@ class VendorDecisionService {
                 await this.vendorDecisionDatasource.updateVendorStatus(orderReference, VendorDecision.declined)
                 return await this.transactionsDatasource.saveRefundDetails(newRefund)
             }
+            const vendorPayDate = await this.vendorPayDateHelper.calculateVendorPayDate(today) as Date
 
-            const acceptedDate = moment().toDate()
-            const vendorPayDate = await this.vendorPayDateHelper.calculateVendorPayDate(acceptedDate) as Date
+            const { amount, serviceFee, deliveryFee, isStockpile, reference} = findTransaction
+
+            const pay = amount - (serviceFee + deliveryFee)
+            const multiplier = isStockpile ? 1 : 0.6
+            
+            const field = payoutDays.includes(today.getDay()) ? 'pendingBalance' : 'balance'
+            findVendorWallet[field] += (pay*multiplier)
 
             const newPendingPay = new PendingPayments()
             newPendingPay.isStockpile = findTransaction.isStockpile
             newPendingPay.orderDelivered = false
             newPendingPay.paymentCompleted = false
             newPendingPay.percentagePaid = '0'
-            newPendingPay.vendorAccepted = acceptedDate
+            newPendingPay.vendorAccepted = today
             newPendingPay.vendorPayDate = vendorPayDate
             newPendingPay.orderReference = orderReference
             newPendingPay.vendorId = vendorId
 
-            if(findTransaction.isStockpile){
-                findVendorWallet.walletBalance += findTransaction.amount - (findTransaction.serviceFee + findTransaction.deliveryFee)
-            }else {
-                findVendorWallet.walletBalance += (findTransaction.amount - (findTransaction.serviceFee + findTransaction.deliveryFee))*0.6
-            }
+            const newWalletTransaction = new WalletTransaction()
+            newWalletTransaction.amount = pay*multiplier
+            newWalletTransaction.amountSlug = `+${pay*multiplier}`
+            newWalletTransaction.reason = `New order on your My Thrift store`
+            newWalletTransaction.status = TransactionStatus.success
+            newWalletTransaction.transactionReference = reference
+            newWalletTransaction.wallet = findVendorWallet
 
-            await this.walletDatasource.saveNewWallet(findVendorWallet)
+            await this.walletDatasource.saveWallet(findVendorWallet)
             await this.vendorDecisionDatasource.updateVendorStatus(orderReference, VendorDecision.accepted)
+            await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
             return await this.vendorDecisionDatasource.newPendingPay(newPendingPay)
         } catch (error) {
             throw error

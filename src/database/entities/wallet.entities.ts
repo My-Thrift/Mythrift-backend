@@ -16,13 +16,19 @@ class Wallet {
     myThriftId!: string
 
     @Column({type: 'int'})
-    walletBalance!: number
+    balance!: number
+
+    @Column({type: 'int'})
+    pendingBalance!: number
 
     @Column({type: 'varchar'})
-    walletAccountName!: string
+    walletPin!: string
 
     @Column({type: 'varchar'})
-    walletAccountNumber!: string
+    accountName!: string
+
+    @Column({type: 'varchar'})
+    accountNumber!: string
 
     @Column({type: 'varchar', default: 'titan-paystack'})
     preferredBank!: string

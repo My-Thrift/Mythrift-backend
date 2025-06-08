@@ -15,6 +15,12 @@ class WalletTransaction {
     @Column({ type: 'varchar'})
     transactionReference!: string
 
+    @Column({ type: 'varchar'})
+    reason!: string
+
+    @Column({ type: 'varchar'})
+    amountSlug!: string
+
     @Column({type: 'enum', enum: TransactionStatus, default: TransactionStatus.pending})
     status!: TransactionStatus
     

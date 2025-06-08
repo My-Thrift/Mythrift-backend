@@ -10,6 +10,10 @@ export class CreateWalletDto {
     @Length(3,12)
     lastName!: string
 
+    @IsString()
+    @Length(4,4)
+    walletPin!: string
+
     @IsEmail()
     email!:string 
 

@@ -3,6 +3,7 @@ import TransferRecipientsDto from "../dto/transfer-recipients.dto";
 import { inject, injectable } from "tsyringe";
 import TransferRecipientsServices from "../services/transfer-recipients.services";
 import { BadRequestError } from "../../../../shared/middleware/error-handler.middleware";
+import SuccessResponse from "../../../../shared/utils/response.utils";
 
 @injectable()
 class TransferRecipientController {
@@ -14,7 +15,7 @@ class TransferRecipientController {
             const accountNumberToString = String(accountNumber)
             const bankCodeToString = String(bankCode)
             const response = await this.transferRecipientsServices.resolveAccount({accountNumber: accountNumberToString, bankCode: bankCodeToString})
-            return res.status(200).json(response)
+            return res.status(200).json(SuccessResponse('Account resolved.', response))
         } catch (error) {
             next(error)
         }
@@ -24,7 +25,7 @@ class TransferRecipientController {
         try {
             const data = req.body as TransferRecipientsDto
             const response = await this.transferRecipientsServices.createRecipient(data)
-            return res.status(200).json(response)
+            return res.status(200).json(SuccessResponse('Transfer recipient created', response))
         } catch (error) {
             next(error)
         }

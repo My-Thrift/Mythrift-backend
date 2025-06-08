@@ -7,16 +7,16 @@ import TransferService from "../../v1/modules/payments/services/transfer.service
 import { NotFoundError } from "../middleware/error-handler.middleware";
 
 @injectable()
-class VendorPay {
+class VendorPayHelper {
     constructor(
         @inject(VendorDecisionDatasource) private vendorDecisionDatasource: VendorDecisionDatasource,
         @inject(TransactionsDatasource) private transactionsDatasource: TransactionsDatasource,
         @inject(TransferRecipientDatasource) private transferRecipientDatasource: TransferRecipientDatasource,
         @inject(TransferService) private transferService: TransferService
     ){}
-    async payVendor(){
+    async payVendor(vendorId: string){
         try {
-            const getAllPendingPayments = await this.vendorDecisionDatasource.getPendingPays()
+            const getAllPendingPayments = await this.vendorDecisionDatasource.getPendingPays(vendorId)
             console.log(getAllPendingPayments)
             for(let i = 0; i<getAllPendingPayments.length; i++){
                 const pendingData = getAllPendingPayments[i]
@@ -29,8 +29,6 @@ class VendorPay {
                 const getVendorTransferRecipient = await this.transferRecipientDatasource.findRecipientByVendorId(vendorId)
                 if(!getVendorTransferRecipient){
                     continue }
-                console.log(transaction)
-                console.log(getVendorTransferRecipient)
                 if(!pendingData.orderDelivered && pendingData.percentagePaid === '0' && !pendingData.isStockpile){
                     console.log('i ran 60')
                     await this.transferService.transferToVendor(transaction, getVendorTransferRecipient.recipientCode, 60)
@@ -45,7 +43,6 @@ class VendorPay {
                 }
             }
         } catch (error) {
-            //console.log(error)
             throw error
         }
     }
@@ -80,5 +77,5 @@ class VendorPay {
     }
 }
 
-export default VendorPay
+export default VendorPayHelper
 

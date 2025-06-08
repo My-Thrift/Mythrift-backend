@@ -8,6 +8,9 @@ import Transfers from "./entities/transfers.entities";
 import ApiKey from "./entities/keys.entities";
 import BankCode from "./entities/bank-code.entities";
 import Recipients from "./entities/recipients.entities";
+import Wallet from "./entities/wallet.entities";
+import WalletTransaction from "./entities/wallet-transactions.entities";
+import Customer from "./entities/customer.entities";
 
 export const AppDatasource = new DataSource({
     type: 'postgres',
@@ -23,7 +26,10 @@ export const AppDatasource = new DataSource({
     Recipients,
     Transfers,
     ApiKey,
-    BankCode
+    BankCode,
+    Wallet,
+    WalletTransaction,
+    Customer
 ],
     logging: true,
     synchronize: false,

@@ -25,7 +25,7 @@ class WalletDatasource {
         return await this.customerRepository.save(customer)
     }
     async findWalletByAccountNumber(accountNumber: string){
-        return await this.walletRepository.findOne({ where: {accountName: accountNumber}})
+        return await this.walletRepository.findOne({ where: {accountNumber: accountNumber}})
     }
     async saveWalletTransaction(transaction: WalletTransaction){
         return await this.walletTransactionRepository.save(transaction)

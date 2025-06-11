@@ -39,7 +39,6 @@ class TransactionsService {
     async updateSuccessfulPaymentStatus(data: any){
         try {
             if(data.metadata){
-                console.log(data)
                 const amount = data.amount/100
                 const accountNumber = data.metadata.receiver_account_number
                 const reference = data.reference
@@ -60,9 +59,13 @@ class TransactionsService {
                 newWalletTransaction.wallet = findWallet
                 newWalletTransaction.amountSlug = `+${amount}`
                 newWalletTransaction.reason = `Wallet Topup`
+                newWalletTransaction.myThriftId = findWallet.myThriftId
 
                return await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
             }
+            const findTransaction = await this.transactionsDatasource.findPaymentByReference(data.reference)
+            if(!findTransaction || findTransaction.paymentStatus === 'success') return
+            
             const update = await this.transactionsDatasource.updateSuccessfulPaymentStatus(data.reference)
             const payload = {
                 event: 'charge.success',

@@ -10,6 +10,7 @@ import paystackTransfer from "../../../../shared/paystack/transfer.paystack";
 import getPaystackBalance from "../../../../shared/paystack/balance.paystack";
 import WalletTransaction from "../../../../database/entities/wallet-transactions.entities";
 import uuidGenerator from "../../../../shared/utils/uuid.utils";
+import { TransactionStatus } from "../../../../database/enums/enums.database";
 
 
 @injectable()
@@ -41,14 +42,18 @@ class VendorPayService {
             
             const reference = uuidGenerator()
             const transfer = await paystackTransfer(payoutAmount, findRecipient.recipientCode, reference)
-    
+
+            findWallet.balance -= payoutAmount
             const newWalletTransaction = new WalletTransaction()
             newWalletTransaction.amount = payoutAmount
             newWalletTransaction.amountSlug = `-${payoutAmount}`
             newWalletTransaction.reason = 'Wallet withdrawal'
             newWalletTransaction.transactionReference = reference
             newWalletTransaction.wallet = findWallet
-
+            newWalletTransaction.status = TransactionStatus.success
+            newWalletTransaction.myThriftId = vendorId
+            
+            await this.walletDatasource.saveWallet(findWallet)
             return await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
         } catch (error) {
             throw error

@@ -19,10 +19,11 @@ const app: Application = express()
 
 app.use(express.json())
 .use(cors({
-    origin: ['http://localhost:3000', 'https://shopmythrift.store']
+    origin: ['http://localhost:3000', 'https://shopmythrift.store'],
+    methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+    allowedHeaders: ['Content-Type','Authorization']
 }))
-
-
+.options('*', cors())
 app.use(`/api/${appVersion.v1}`, healthRouter)
 app.use(`/api/${appVersion.v1}`, initPaymentRouter)
 app.use(`/api/${appVersion.v1}`, transferrecipientRouter)

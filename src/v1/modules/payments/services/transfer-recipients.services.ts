@@ -28,7 +28,7 @@ class TransferRecipientsServices {
 
     async createRecipient(data: TransferRecipientsDto){
         try {
-            const recipientExist = await this.transferRecipientDatasource.findRecipient(data.accountNumber)
+            const recipientExist = await this.transferRecipientDatasource.findRecipientByAccountNumber(data.accountNumber)
             if(recipientExist) throw new ConflictError('Recipient already exist')
 
             const reqData = {

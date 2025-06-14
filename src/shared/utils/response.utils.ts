@@ -1,7 +1,8 @@
-const SuccessResponse = (message: string)=>{
+const SuccessResponse = (message: string, data?: any)=>{
 return {
     status: true,
-    message: message
+    message: message,
+    data
 }
 }
 

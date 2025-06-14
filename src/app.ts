@@ -9,9 +9,10 @@ import paystackWebhook from './shared/paystack/webhooks.paystack'
 import moment from 'moment-timezone'
 import vendorDecisionRouter from './v1/modules/payments/routes/vendor-decision.routes'
 import { container } from 'tsyringe'
-import VendorPay from './shared/helpers/vendor-pay.helper'
+import VendorPayHelper from './shared/helpers/vendor-pay.helper'
 import deliveryStatusRouter from './v1/modules/payments/routes/delivery-status.routes'
 import vendorPayRouter from './v1/modules/payments/routes/vendor-pay.routes'
+import walletRouter from './v1/modules/payments/routes/wallet.routes'
 const app: Application = express()
 
 
@@ -26,6 +27,7 @@ app.use(`/api/${appVersion.v1}/webhook/paystack`, paystackWebhook)
 app.use(`/api/${appVersion.v1}`, vendorDecisionRouter)
 app.use(`/api/${appVersion.v1}`, deliveryStatusRouter)
 app.use(`/api/${appVersion.v1}`, vendorPayRouter)
+app.use(`/api/${appVersion.v1}`, walletRouter)
 
 
 moment.tz.setDefault('Africa/Lagos')

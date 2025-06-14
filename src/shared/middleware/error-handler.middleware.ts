@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { NextFunction, Request, Response } from "express";
 
 class CustomError extends Error {
@@ -53,6 +54,11 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
     if(err instanceof CustomError){
         return res.status(err.statusCode).json({status: false, message: err.message})
     }
-    //console.error(err)
+   // console.error(err)
+    if( AxiosError.ERR_BAD_RESPONSE){
+        console.log(err)
+        return
+    }
+    console.log(err)
     return res.status(500).json({ message: 'server error' })
 } 

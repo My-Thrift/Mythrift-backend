@@ -9,6 +9,7 @@ import paystackWebhook from './shared/paystack/webhooks.paystack'
 import moment from 'moment-timezone'
 import vendorDecisionRouter from './v1/modules/payments/routes/vendor-decision.routes'
 import { container } from 'tsyringe'
+import cors from 'cors'
 import VendorPayHelper from './shared/helpers/vendor-pay.helper'
 import deliveryStatusRouter from './v1/modules/payments/routes/delivery-status.routes'
 import vendorPayRouter from './v1/modules/payments/routes/vendor-pay.routes'
@@ -17,7 +18,9 @@ const app: Application = express()
 
 
 app.use(express.json())
-
+.use(cors({
+    origin: ['http://localhost:3000', 'https://shopmythrift.store']
+}))
 
 
 app.use(`/api/${appVersion.v1}`, healthRouter)

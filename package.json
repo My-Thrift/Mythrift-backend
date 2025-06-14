@@ -7,10 +7,10 @@
     "dev": "nodemon",
     "build": "tsc",
     "start": "npm run migration:run && node dist/server.js",
-    "typeorm": "typeorm-ts-node-commonjs",
-    "migration:generate": "npm run typeorm migration:generate -- -d src/database/index.ts",
-    "migration:run": "npm run typeorm migration:run -- -d src/database/index.ts",
-    "migration:revert": "npm run typeorm migration:revert -- -d src/database/index.ts"
+    "typeorm": "typeorm",
+    "migration:generate": "npm run typeorm -- migration:generate -d dist/database/index.js",
+    "migration:run":      "npm run typeorm -- migration:run      -d dist/database/index.js",
+    "migration:revert":   "npm run typeorm -- migration:revert   -d dist/database/index.js"
   },
   "keywords": [],
   "author": "",

@@ -16,6 +16,9 @@ class WalletTransaction {
     transactionReference!: string
 
     @Column({ type: 'varchar'})
+    myThriftId!: string
+
+    @Column({ type: 'varchar'})
     reason!: string
 
     @Column({ type: 'varchar'})

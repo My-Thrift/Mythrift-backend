@@ -3,12 +3,15 @@ import { TransactionsDto } from "../dto/transactions.dto";
 import uuidGenerator from "../../../../shared/utils/uuid.utils";
 import axios from 'axios'
 import appConfig from "../../../../config/app.config";
-import { DependencyError } from "../../../../shared/middleware/error-handler.middleware";
+import { DependencyError, ForbidenError } from "../../../../shared/middleware/error-handler.middleware";
 import TransactionsDatasource from "../datasource/transactions.datasource";
 import { generateSignature } from "../../../../shared/cloud/signature.cloud";
 import WalletDatasource from "../datasource/wallet.datasource";
 import WalletTransaction from "../../../../database/entities/wallet-transactions.entities";
 import { TransactionStatus } from "../../../../database/enums/enums.database";
+import initializeTransaction from "../../../../shared/paystack/transaction.paystack";
+import Wallet from "../../../../database/entities/wallet.entities";
+import Transactions from "../../../../database/entities/transactions.entities";
 
 @injectable()
 class TransactionsService {
@@ -16,20 +19,26 @@ class TransactionsService {
         @inject(TransactionsDatasource) private transactionsDatasource: TransactionsDatasource,
         @inject(WalletDatasource) private walletDatasource: WalletDatasource
     ){}
-    async initPayment(data: TransactionsDto) {
+    async initPayment(data: TransactionsDto):Promise<Transactions | any> {
         try {
-            const { amount, email, firstName, lastName} = data
+            const { amount, email, firstName, lastName, walletId} = data
             const reference = uuidGenerator()
             const reqBody = { amount: amount*100 , email, firstName, lastName, reference}
-            const response = await axios.post(`${appConfig.paystack.base_url}/transaction/initialize`,
-                reqBody,
-                {
-                headers: {
-                    'Authorization': `Bearer ${appConfig.paystack.api_key}`
-                }
+
+            if(walletId){ 
+                const findWallet: Wallet | null = await this.walletDatasource.findWalletByWalletId(walletId)
+                if(!findWallet) throw new ForbidenError('You cannot use this payment option')
+             
+                if(findWallet.balance < amount) throw new ForbidenError('Insufficient Wallet Balance')
+                findWallet.balance -= amount
+
+                await this.walletDatasource.saveWallet(findWallet)
+                return await this.transactionsDatasource.initPayment({...data, reference: reference, paymentStatus: 'pending', vendorStatus: 'pending', orderDelivered: false})
             }
-            )
+
+            const response = await initializeTransaction(reqBody)
             if(!response) throw new DependencyError('Paystack Error: Error initializing payment')
+
             await this.transactionsDatasource.initPayment({...data, reference: reference, paymentStatus: 'pending', vendorStatus: 'pending', orderDelivered: false})
             return response.data
         } catch (error) {
@@ -38,8 +47,8 @@ class TransactionsService {
     }
     async updateSuccessfulPaymentStatus(data: any){
         try {
+            
             if(data.metadata){
-                console.log(data)
                 const amount = data.amount/100
                 const accountNumber = data.metadata.receiver_account_number
                 const reference = data.reference
@@ -51,8 +60,6 @@ class TransactionsService {
                 if(!findWallet) return
 
                 findWallet.balance += amount
-                await this.walletDatasource.saveWallet(findWallet)
-
                 const newWalletTransaction = new WalletTransaction()
                 newWalletTransaction.amount = amount
                 newWalletTransaction.status = TransactionStatus.success
@@ -60,9 +67,15 @@ class TransactionsService {
                 newWalletTransaction.wallet = findWallet
                 newWalletTransaction.amountSlug = `+${amount}`
                 newWalletTransaction.reason = `Wallet Topup`
+                newWalletTransaction.myThriftId = findWallet.myThriftId
 
+               await this.walletDatasource.saveWallet(findWallet)
                return await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
             }
+
+            const findTransaction = await this.transactionsDatasource.findPaymentByReference(data.reference)
+            if(!findTransaction || findTransaction.paymentStatus === 'success') return
+            
             const update = await this.transactionsDatasource.updateSuccessfulPaymentStatus(data.reference)
             const payload = {
                 event: 'charge.success',

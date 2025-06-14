@@ -69,6 +69,7 @@ class VendorDecisionService {
             newWalletTransaction.status = TransactionStatus.success
             newWalletTransaction.transactionReference = reference
             newWalletTransaction.wallet = findVendorWallet
+            newWalletTransaction.myThriftId = vendorId
 
             await this.walletDatasource.saveWallet(findVendorWallet)
             await this.vendorDecisionDatasource.updateVendorStatus(orderReference, VendorDecision.accepted)

@@ -13,6 +13,9 @@ class WalletService {
     constructor(@inject(WalletDatasource) private walletDatasource: WalletDatasource){}
     async createWallet(data: CreateWalletDto){
         try {
+            const walletExist = await this.walletDatasource.findWalletByVendorId(data.myThriftId)
+            if(walletExist) throw new ConflictError('User already has a wallet')
+                
             const customerExist = await this.walletDatasource.customerExist(data.email)
             if(customerExist) throw new ConflictError('Customer with this email already exist')
 
@@ -21,7 +24,7 @@ class WalletService {
     
             const customerId = createCustomer.data.id
    
-            const createDva = await createPaystackDva({customerId, preferredBank:'wema-bank'})
+            const createDva = await createPaystackDva({customerId, preferredBank:'titan-paystack'})
             if(!createDva) throw new DependencyError('Paystack error: error creating dva')
         
             const newCustomer = new Customer()
@@ -41,7 +44,7 @@ class WalletService {
             newWallet.accountName = createDva.data.account_name
             newWallet.balance = 0
             newWallet.walletId = createDva.data.id
-            newWallet.preferredBank = 'wema-bank'
+            newWallet.preferredBank = 'titan-paystack'
             newWallet.pendingBalance = 0
             newWallet.accountNumber = createDva.data.account_number
             newWallet.walletPin = walletPin

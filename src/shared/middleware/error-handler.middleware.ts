@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import { NextFunction, Request, Response } from "express";
+import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 
 class CustomError extends Error {
     public statusCode: number;
@@ -50,15 +50,10 @@ export class DependencyError extends CustomError {
     }
 }
 
-export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)=>{
+export const errorHandler: ErrorRequestHandler = (err: any, req: Request, res: Response, next: NextFunction)=>{
     if(err instanceof CustomError){
-        return res.status(err.statusCode).json({status: false, message: err.message})
-    }
-   // console.error(err)
-    if( AxiosError.ERR_BAD_RESPONSE){
-        console.log(err)
-        return
+         res.status(err.statusCode).json({status: false, message: err.message})
     }
     console.log(err)
-    return res.status(500).json({ message: 'server error' })
+    res.status(500).json({ message: 'server error' })
 } 

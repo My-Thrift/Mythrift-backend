@@ -19,7 +19,7 @@ const app: Application = express()
 
 app.use(express.json())
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://shopmythrift.store'],
+    origin: ['http://localhost:3000', 'https://shopmythrift.store', 'https://www.shopmythrift.store'],
     methods: ['GET','POST','PUT','DELETE','OPTIONS'],
     allowedHeaders: ['Content-Type','Authorization']
 }))

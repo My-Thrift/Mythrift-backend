@@ -58,7 +58,7 @@ class TransactionsService {
     async updateSuccessfulPaymentStatus(data: any){
         try {
             console.log(data)
-            if(data.metadata){
+            if(data.metadata.receiver_account_number){
                 const amount = data.amount/100
                 const accountNumber = data.metadata.receiver_account_number
                 const reference = data.reference

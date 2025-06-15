@@ -40,7 +40,7 @@ class TransactionsService {
                 newWalletTransaction.status = TransactionStatus.success
                 newWalletTransaction.transactionReference = reference
                 newWalletTransaction.wallet = findWallet
-                
+
                 await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
                 await this.walletDatasource.saveWallet(findWallet)
                 return await this.transactionsDatasource.initPayment({...data, reference: reference, paymentStatus: TransactionStatus.success, vendorStatus: 'pending', orderDelivered: false})
@@ -57,7 +57,7 @@ class TransactionsService {
     }
     async updateSuccessfulPaymentStatus(data: any){
         try {
-            
+            console.log(data)
             if(data.metadata){
                 const amount = data.amount/100
                 const accountNumber = data.metadata.receiver_account_number
@@ -84,7 +84,7 @@ class TransactionsService {
             const findTransaction = await this.transactionsDatasource.findPaymentByReference(data.reference)
             if(!findTransaction || findTransaction.paymentStatus === 'success') return
             
-            const update = await this.transactionsDatasource.updateSuccessfulPaymentStatus(data.reference)
+            const update: Transactions | null = await this.transactionsDatasource.updateSuccessfulPaymentStatus(data.reference)
             const payload = {
                 event: 'charge.success',
                 data: update

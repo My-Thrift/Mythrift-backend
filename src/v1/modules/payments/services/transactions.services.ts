@@ -33,13 +33,13 @@ class TransactionsService {
                 findWallet.balance -= amount
 
                 await this.walletDatasource.saveWallet(findWallet)
-                return await this.transactionsDatasource.initPayment({...data, reference: reference, paymentStatus: 'pending', vendorStatus: 'pending', orderDelivered: false})
+                return await this.transactionsDatasource.initPayment({...data, reference: reference, paymentStatus: TransactionStatus.success, vendorStatus: 'pending', orderDelivered: false})
             }
 
             const response = await initializeTransaction(reqBody)
             if(!response) throw new DependencyError('Paystack Error: Error initializing payment')
 
-            await this.transactionsDatasource.initPayment({...data, reference: reference, paymentStatus: 'pending', vendorStatus: 'pending', orderDelivered: false})
+            await this.transactionsDatasource.initPayment({...data, reference: reference, paymentStatus: TransactionStatus.pending, vendorStatus: 'pending', orderDelivered: false})
             return response.data
         } catch (error) {
             throw error
@@ -52,13 +52,12 @@ class TransactionsService {
                 const amount = data.amount/100
                 const accountNumber = data.metadata.receiver_account_number
                 const reference = data.reference
-                
                 const findTransaction = await this.walletDatasource.findWalletTransactionByReference(reference)
                 if(findTransaction) return
 
                 const findWallet =  await this.walletDatasource.findWalletByAccountNumber(accountNumber)
                 if(!findWallet) return
-
+                console.log(findWallet)
                 findWallet.balance += amount
                 const newWalletTransaction = new WalletTransaction()
                 newWalletTransaction.amount = amount

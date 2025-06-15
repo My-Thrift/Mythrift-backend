@@ -21,7 +21,7 @@ class TransactionsService {
     ){}
     async initPayment(data: TransactionsDto):Promise<Transactions | any> {
         try {
-            const { amount, email, firstName, lastName, walletId} = data
+            const { amount, email, firstName, lastName, walletId, userId} = data
             const reference = uuidGenerator()
             const reqBody = { amount: amount*100 , email, firstName, lastName, reference}
 
@@ -32,6 +32,16 @@ class TransactionsService {
                 if(findWallet.balance < amount) throw new ForbidenError('Insufficient Wallet Balance')
                 findWallet.balance -= amount
 
+                const newWalletTransaction = new WalletTransaction()
+                newWalletTransaction.amount = amount
+                newWalletTransaction.amountSlug = `-${amount}`
+                newWalletTransaction.myThriftId = userId
+                newWalletTransaction.reason = 'Purchase on My Thrift'
+                newWalletTransaction.status = TransactionStatus.success
+                newWalletTransaction.transactionReference = reference
+                newWalletTransaction.wallet = findWallet
+                
+                await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
                 await this.walletDatasource.saveWallet(findWallet)
                 return await this.transactionsDatasource.initPayment({...data, reference: reference, paymentStatus: TransactionStatus.success, vendorStatus: 'pending', orderDelivered: false})
             }
@@ -57,7 +67,6 @@ class TransactionsService {
 
                 const findWallet =  await this.walletDatasource.findWalletByAccountNumber(accountNumber)
                 if(!findWallet) return
-                console.log(findWallet)
                 findWallet.balance += amount
                 const newWalletTransaction = new WalletTransaction()
                 newWalletTransaction.amount = amount

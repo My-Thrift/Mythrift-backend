@@ -12,7 +12,7 @@ class TransactionsRouterController {
         try {
             const data = req.body as TransactionsDto
             const response = await this.transactionsService.initPayment(data)
-            return res.status(200).json(SuccessResponse('Payment link created', response))
+            return res.status(200).json(SuccessResponse('Payment initialized', response))
         } catch (error) {
             next(error)
         }

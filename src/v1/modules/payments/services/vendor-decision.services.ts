@@ -12,6 +12,7 @@ import { TransactionStatus, VendorDecision } from "../../../../database/enums/en
 import WalletDatasource from "../datasource/wallet.datasource";
 import { payoutDays } from "../../../../config/days.config";
 import WalletTransaction from "../../../../database/entities/wallet-transactions.entities";
+import Wallet from "../../../../database/entities/wallet.entities";
 
 @injectable()
 class VendorDecisionService {
@@ -31,15 +32,32 @@ class VendorDecisionService {
             const findVendorWallet = await this.walletDatasource.findWalletByVendorId(vendorId)
             if(!findVendorWallet) throw new ForbidenError('Please create a wallet to start accepting orders')
 
+            const findUserWallet: Wallet | null = await this.walletDatasource.findWalletByVendorId(findTransaction.userId)
+            if(!findUserWallet) throw new NotFoundError('User does not have an active wallet')
+
             if(findTransaction.vendorStatus !== 'pending' || findTransaction.paymentStatus !=='success') throw new ForbidenError('You cannot take this action')
             if(vendorStatus === 'declined') {
+                const amount = findTransaction.amount - (findTransaction.serviceFee + findTransaction.deliveryFee)
                 const refund = await refundTransaction(orderReference, findTransaction.amount)
                 const newRefund = new Refunds()
                 newRefund.orderReference = orderReference
-                newRefund.amountRefunded = findTransaction.amount
+                newRefund.amountRefunded = amount
                 newRefund.additionalInfo = refund
-
                 await this.vendorDecisionDatasource.updateVendorStatus(orderReference, VendorDecision.declined)
+
+                findUserWallet.balance += findTransaction.amount
+
+                const newWalletTransaction = new WalletTransaction()
+                newWalletTransaction.amount = amount
+                newWalletTransaction.amountSlug = `+${amount}`
+                newWalletTransaction.myThriftId = findTransaction.userId
+                newWalletTransaction.reason = 'Order declined'
+                newWalletTransaction.status = TransactionStatus.success
+                newWalletTransaction.transactionReference = findTransaction.reference
+                newWalletTransaction.wallet = findUserWallet
+
+                await this.walletDatasource.saveWallet(findUserWallet)
+                await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
                 return await this.transactionsDatasource.saveRefundDetails(newRefund)
             }
             const vendorPayDate = await this.vendorPayDateHelper.calculateVendorPayDate(today) as Date

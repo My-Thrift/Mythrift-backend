@@ -8,6 +8,7 @@ import { payoutDays } from "../../../../config/days.config";
 import moment from "moment-timezone";
 import WalletTransaction from "../../../../database/entities/wallet-transactions.entities";
 import { TransactionStatus } from "../../../../database/enums/enums.database";
+import emitWalletUpdate from "../../../../shared/socket/emit.socket";
 
 
 @injectable()
@@ -56,7 +57,9 @@ class DeliveryStatusService {
                 newWalletTransaction.myThriftId = vendorId
                 await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
             }
-            await this.walletDatasource.saveWallet(findWallet)
+            const saveWallet = await this.walletDatasource.saveWallet(findWallet)
+            const { myThriftId, balance, pendingBalance} = saveWallet
+            emitWalletUpdate(myThriftId, {balance, pendingBalance})
             await this.vendorDecisionDatasource.updateDeliveryStatus(reference, status)
             return await this.transactionsDatasource.updateDeliveryStatus(reference, status)
         } catch (error) {

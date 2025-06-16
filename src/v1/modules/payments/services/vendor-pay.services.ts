@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { RequestPayoutDto } from "../dto/vendor-pay.dto";
 import WalletDatasource from "../datasource/wallet.datasource";
-import { ForbidenError, UnauthorizedError } from "../../../../shared/middleware/error-handler.middleware";
+import { BadRequestError, ForbidenError, UnauthorizedError } from "../../../../shared/middleware/error-handler.middleware";
 import moment from "moment-timezone";
 import { payoutDays } from "../../../../config/days.config";
 import { compareWalletPin } from "../../../../shared/utils/hash.utils";
@@ -29,6 +29,8 @@ class VendorPayService {
             const today = moment().toDate().getDay()
             if(!payoutDays.includes(today)) throw new ForbidenError('Today is not a payout day')
         
+            if(payoutAmount < 100) throw new BadRequestError('Payout amount must be more than 100 Naira')
+                
             const findWallet: Wallet | null = await this.walletDatasource.findWalletByVendorId(vendorId)
             if(!findWallet) throw new ForbidenError('Please create a wallet before requesting payout')
 

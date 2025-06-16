@@ -53,6 +53,7 @@ export class DependencyError extends CustomError {
 export const errorHandler: ErrorRequestHandler = (err: any, req: Request, res: Response, next: NextFunction)=>{
     if(err instanceof CustomError){
          res.status(err.statusCode).json({status: false, message: err.message})
+         return
     }
     console.log(err)
     res.status(500).json({ message: 'server error' })

@@ -78,7 +78,9 @@ class TransactionsService {
                 newWalletTransaction.myThriftId = findWallet.myThriftId
 
                await this.walletDatasource.saveWallet(findWallet)
-               emitWalletUpdate(findWallet.myThriftId, findWallet, newWalletTransaction)
+               const {wallet, ...rest} = newWalletTransaction
+               const { balance, pendingBalance} = findWallet
+               emitWalletUpdate(findWallet.myThriftId, {balance, pendingBalance}, rest)
                return await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
             }
 

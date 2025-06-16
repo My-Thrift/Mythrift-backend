@@ -10,7 +10,6 @@ import moment from 'moment-timezone'
 import vendorDecisionRouter from './v1/modules/payments/routes/vendor-decision.routes'
 import cors from 'cors'
 import helmet from 'helmet'
-import xss from 'xss-clean';
 import VendorPayHelper from './shared/helpers/vendor-pay.helper'
 import deliveryStatusRouter from './v1/modules/payments/routes/delivery-status.routes'
 import vendorPayRouter from './v1/modules/payments/routes/vendor-pay.routes'

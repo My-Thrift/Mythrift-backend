@@ -31,10 +31,10 @@
     "moment-timezone": "^0.6.0",
     "pg": "^8.16.0",
     "reflect-metadata": "^0.2.2",
+    "socket.io": "^4.8.1",
     "tsyringe": "^4.10.0",
     "typeorm": "^0.3.24",
-    "uuid": "^11.1.0",
-    "xss-clean": "^0.1.4"
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

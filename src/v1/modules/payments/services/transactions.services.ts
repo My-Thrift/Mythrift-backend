@@ -12,6 +12,7 @@ import { TransactionStatus } from "../../../../database/enums/enums.database";
 import initializeTransaction from "../../../../shared/paystack/transaction.paystack";
 import Wallet from "../../../../database/entities/wallet.entities";
 import Transactions from "../../../../database/entities/transactions.entities";
+import emitWalletUpdate from "../../../../shared/socket/emit.socket";
 
 @injectable()
 class TransactionsService {
@@ -43,6 +44,7 @@ class TransactionsService {
 
                 await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
                 await this.walletDatasource.saveWallet(findWallet)
+                emitWalletUpdate(findWallet.myThriftId, findWallet, findWallet)
                 return await this.transactionsDatasource.initPayment({...data, reference: reference, paymentStatus: TransactionStatus.success, vendorStatus: 'pending', orderDelivered: false})
             }
 

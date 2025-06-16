@@ -10,7 +10,7 @@ const server = http.createServer(app)
 
 export const io = new Server(server, {
   path: '/wallet',                // ← custom path
-  transports: ['websocket'],
+  transports: ['websocket', 'polling'],
   cors: {
     origin: [
       'http://localhost:3000',

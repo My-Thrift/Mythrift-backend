@@ -33,8 +33,8 @@ class VendorDecisionService {
             const findVendorWallet = await this.walletDatasource.findWalletByVendorId(vendorId)
             if(!findVendorWallet) throw new ForbidenError('Please create a wallet to start accepting orders')
 
-            const findUserWallet: Wallet | null = await this.walletDatasource.findWalletByVendorId(findTransaction.userId)
-            if(!findUserWallet) throw new NotFoundError('User does not have an active wallet')
+            const findUserWallet = await this.walletDatasource.findWalletByVendorId(findTransaction.userId) as Wallet
+           // if(!findUserWallet) throw new NotFoundError('User does not have an active wallet')
 
             if(findTransaction.vendorStatus !== 'pending' || findTransaction.paymentStatus !=='success') throw new ForbidenError('You cannot take this action')
             if(vendorStatus === 'declined') {

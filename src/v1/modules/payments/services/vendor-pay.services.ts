@@ -13,6 +13,7 @@ import uuidGenerator from "../../../../shared/utils/uuid.utils";
 import { TransactionStatus } from "../../../../database/enums/enums.database";
 import Recipients from "../../../../database/entities/recipients.entities";
 import Wallet from "../../../../database/entities/wallet.entities";
+import emitWalletUpdate from "../../../../shared/socket/emit.socket";
 
 
 @injectable()
@@ -55,7 +56,9 @@ class VendorPayService {
             newWalletTransaction.status = TransactionStatus.success
             newWalletTransaction.myThriftId = vendorId
             
-            await this.walletDatasource.saveWallet(findWallet)
+            const saveWallet = await this.walletDatasource.saveWallet(findWallet)
+            const { balance, pendingBalance} = saveWallet
+            emitWalletUpdate(findWallet.myThriftId, {balance, pendingBalance})
             return await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
         } catch (error) {
             throw error

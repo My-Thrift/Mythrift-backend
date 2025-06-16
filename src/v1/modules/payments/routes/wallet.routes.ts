@@ -11,5 +11,6 @@ const walletController = container.resolve(WalletController)
 
 walletRouter
 .post('/create-wallet', [authMiddleware,requestValidator(CreateWalletDto)], walletController.createWallet.bind(walletController))
+.get('/wallet-transactions/:myThriftId', [authMiddleware], walletController.getWalletTransactions.bind(walletController))
 
 export default walletRouter

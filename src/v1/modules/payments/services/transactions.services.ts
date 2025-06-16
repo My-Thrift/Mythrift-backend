@@ -43,7 +43,9 @@ class TransactionsService {
                 newWalletTransaction.wallet = findWallet
 
                 await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
-                await this.walletDatasource.saveWallet(findWallet)
+                const saveWalet = await this.walletDatasource.saveWallet(findWallet)
+                const {myThriftId, pendingBalance, balance} = saveWalet
+                emitWalletUpdate(myThriftId, {balance, pendingBalance})
                 return await this.transactionsDatasource.initPayment({...data, reference: reference, paymentStatus: TransactionStatus.success, vendorStatus: 'pending', orderDelivered: false})
             }
 
@@ -78,9 +80,8 @@ class TransactionsService {
                 newWalletTransaction.myThriftId = findWallet.myThriftId
 
                await this.walletDatasource.saveWallet(findWallet)
-               const {wallet, ...rest} = newWalletTransaction
                const { balance, pendingBalance} = findWallet
-               emitWalletUpdate(findWallet.myThriftId, {balance, pendingBalance}, rest)
+               emitWalletUpdate(findWallet.myThriftId, {balance, pendingBalance})
                return await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
             }
 

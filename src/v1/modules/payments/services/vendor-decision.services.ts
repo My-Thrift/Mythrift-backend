@@ -13,6 +13,7 @@ import WalletDatasource from "../datasource/wallet.datasource";
 import { payoutDays } from "../../../../config/days.config";
 import WalletTransaction from "../../../../database/entities/wallet-transactions.entities";
 import Wallet from "../../../../database/entities/wallet.entities";
+import emitWalletUpdate from "../../../../shared/socket/emit.socket";
 
 @injectable()
 class VendorDecisionService {
@@ -37,7 +38,7 @@ class VendorDecisionService {
 
             if(findTransaction.vendorStatus !== 'pending' || findTransaction.paymentStatus !=='success') throw new ForbidenError('You cannot take this action')
             if(vendorStatus === 'declined') {
-                const amount = findTransaction.amount - (findTransaction.serviceFee + findTransaction.deliveryFee)
+                const amount = findTransaction.amount //- (findTransaction.serviceFee + findTransaction.deliveryFee)
                 const refund = await refundTransaction(orderReference, findTransaction.amount)
                 const newRefund = new Refunds()
                 newRefund.orderReference = orderReference
@@ -45,7 +46,7 @@ class VendorDecisionService {
                 newRefund.additionalInfo = refund
                 await this.vendorDecisionDatasource.updateVendorStatus(orderReference, VendorDecision.declined)
 
-                findUserWallet.balance += findTransaction.amount
+                findUserWallet.balance += amount
 
                 const newWalletTransaction = new WalletTransaction()
                 newWalletTransaction.amount = amount
@@ -56,10 +57,14 @@ class VendorDecisionService {
                 newWalletTransaction.transactionReference = findTransaction.reference
                 newWalletTransaction.wallet = findUserWallet
 
-                await this.walletDatasource.saveWallet(findUserWallet)
+                const saveWallet = await this.walletDatasource.saveWallet(findUserWallet)
+                const {myThriftId, balance, pendingBalance}= saveWallet
+                emitWalletUpdate(myThriftId, {balance, pendingBalance})
                 await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
                 return await this.transactionsDatasource.saveRefundDetails(newRefund)
             }
+
+            // accepted logic
             const vendorPayDate = await this.vendorPayDateHelper.calculateVendorPayDate(today) as Date
 
             const { amount, serviceFee, deliveryFee, isStockpile, reference} = findTransaction
@@ -89,9 +94,11 @@ class VendorDecisionService {
             newWalletTransaction.wallet = findVendorWallet
             newWalletTransaction.myThriftId = vendorId
 
-            await this.walletDatasource.saveWallet(findVendorWallet)
+            const saveWallet = await this.walletDatasource.saveWallet(findVendorWallet)
+            const {myThriftId, pendingBalance, balance} = saveWallet
             await this.vendorDecisionDatasource.updateVendorStatus(orderReference, VendorDecision.accepted)
             await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
+            emitWalletUpdate(myThriftId, {balance, pendingBalance})
             return await this.vendorDecisionDatasource.newPendingPay(newPendingPay)
         } catch (error) {
             throw error

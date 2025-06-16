@@ -33,6 +33,9 @@ class WalletDatasource {
     async findWalletTransactionByReference(reference: string):Promise< WalletTransaction | null>{
         return await this.walletTransactionRepository.findOne({ where: { transactionReference: reference}})
     }
+    async findWalletTransactionByMythriftId(myThriftId: string):Promise< WalletTransaction[] | null>{
+        return await this.walletTransactionRepository.find({ where: { myThriftId}})
+    }
     async findWalletByVendorId(vendorId: string):Promise<Wallet | null>{
         return await this.walletRepository.findOne({ where: {myThriftId: vendorId}})
     }

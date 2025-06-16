@@ -55,6 +55,14 @@ class WalletService {
             throw error
         }
     }
+    async getWalletTransactions(myThriftId: string){
+        try {
+            return await this.walletDatasource.findWalletTransactionByMythriftId(myThriftId)
+
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 export default WalletService

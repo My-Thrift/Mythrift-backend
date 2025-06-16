@@ -16,6 +16,7 @@ export const io = new Server(server, {
       'http://localhost:3000',
       'https://www.shopmythrift.store',
       'https://shopmythrift.store',
+      'https://staging.mythriftpayments.site'
     ],
     credentials: true,
   },

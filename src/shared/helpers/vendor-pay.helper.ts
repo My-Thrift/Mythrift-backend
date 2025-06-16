@@ -50,9 +50,10 @@ class VendorPayHelper {
         try {
             const transaction = await this.transactionsDatasource.findPaymentByRefrenceAndVendor(reference, vendorId)
             if(!transaction) throw new NotFoundError('Transactions does not exist')
-            const { amount }= transaction
-            const sixtyPercent = amount*0.6
-            const fortyPercent = amount - sixtyPercent
+            const { amount, serviceFee, deliveryFee}= transaction
+            const pay = amount - (serviceFee + deliveryFee)
+            const sixtyPercent = pay*0.6
+            const fortyPercent = pay - sixtyPercent
             return {"sixty-percent": sixtyPercent, "forty-percent": fortyPercent}
         } catch (error) {
             throw error

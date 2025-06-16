@@ -9,7 +9,7 @@ const port = appConfig.server.port
 const server = http.createServer(app)
 
 export const io = new Server(server, {
-  //path: '/wallet',                // ← custom path
+  path: '/wallet',               
   transports: ['websocket'],
   cors: {
     origin: [

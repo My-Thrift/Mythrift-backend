@@ -1,10 +1,11 @@
-import { io } from "../../server"
+import { io, walletNsp } from "../../server"
 
 
 
 export const emitWalletUpdate = (myThriftId: string, wallet: any, walletTransaction: any)=>{
     try {
-        io.to(myThriftId).emit("walletUpdate", {myThriftId, wallet})
+        console.log('event sent to ', myThriftId)
+        walletNsp.to(myThriftId).emit("walletUpdate", {myThriftId, wallet, walletTransaction})
     } catch (error) {
         throw error
     }

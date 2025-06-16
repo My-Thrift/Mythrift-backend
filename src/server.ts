@@ -9,8 +9,8 @@ const port = appConfig.server.port
 const server = http.createServer(app)
 
 export const io = new Server(server, {
-  path: '/wallet',                // ← custom path
-  transports: ['websocket', 'polling'],
+  //path: '/wallet',                // ← custom path
+  transports: ['websocket'],
   cors: {
     origin: [
       'http://localhost:3000',
@@ -22,18 +22,20 @@ export const io = new Server(server, {
   },
 })
 
-io.use(socketMiddleware)
 
-io.on('connection', (socket: Socket) => {
-  const user = socket.data.myThriftId as string | undefined
+export const walletNsp = io.of('/wallet')
+.use(socketMiddleware)
+.on('connection', async (socket: Socket) => {
+  const user = socket.data.myThriftId as string 
   if (!user) {
-    console.warn(`Socket ${socket.id} connected without myThriftId`)
-    socket.disconnect(true)
-    return
-  }
+  console.warn(`Socket ${socket.id} connected without myThriftId`)
+  socket.disconnect(true)
+  return
+}
 
-  socket.join(user)
-  socket.emit('userJoined', { user })  
+  socket.join(user)  
+
+  walletNsp.to(user).emit('hello', user)
   console.log(`New user in room ${user} (socket ${socket.id})`)
 
   socket.on('disconnect', () => {

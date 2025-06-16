@@ -44,7 +44,6 @@ class TransactionsService {
 
                 await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
                 await this.walletDatasource.saveWallet(findWallet)
-                emitWalletUpdate(findWallet.myThriftId, findWallet, findWallet)
                 return await this.transactionsDatasource.initPayment({...data, reference: reference, paymentStatus: TransactionStatus.success, vendorStatus: 'pending', orderDelivered: false})
             }
 
@@ -79,6 +78,7 @@ class TransactionsService {
                 newWalletTransaction.myThriftId = findWallet.myThriftId
 
                await this.walletDatasource.saveWallet(findWallet)
+               emitWalletUpdate(findWallet.myThriftId, findWallet, newWalletTransaction)
                return await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
             }
 

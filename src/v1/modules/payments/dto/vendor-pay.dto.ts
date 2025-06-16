@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from "class-validator";
+import { IsNumber, IsString, Length } from "class-validator";
 
 
 export class RequestPayoutDto {
@@ -6,6 +6,7 @@ export class RequestPayoutDto {
     vendorId!: string
 
     @IsString()
+    @Length(4,4)
     walletPin!: string
 
     @IsNumber()

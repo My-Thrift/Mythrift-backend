@@ -42,6 +42,17 @@ class WalletDatasource {
     async findWalletByWalletId(walletId: string):Promise<Wallet | null>{
         return await this.walletRepository.findOne({ where: {walletId}})
     }
+    async updateWalletBalanceFromPendingBalance(){
+        await this.walletRepository
+        .createQueryBuilder()
+        .update(Wallet)                                
+        .set({
+          balance: () => `"balance" + "pendingBalance"`,
+          pendingBalance: () => '0'
+        })
+        .where('"pendingBalance" > 0')
+        .execute();
+    }
 }
 
 export default WalletDatasource

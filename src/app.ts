@@ -8,6 +8,7 @@ import transferrecipientRouter from './v1/modules/payments/routes/transfer-recip
 import paystackWebhook from './shared/paystack/webhooks.paystack'
 import moment from 'moment-timezone'
 import vendorDecisionRouter from './v1/modules/payments/routes/vendor-decision.routes'
+import './shared/jobs/wallet-balance.jobs'
 import cors from 'cors'
 import helmet from 'helmet'
 import VendorPayHelper from './shared/helpers/vendor-pay.helper'

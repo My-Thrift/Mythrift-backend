@@ -33,7 +33,7 @@ class VendorPayDateHelper {
         try {
             const pendingPayData = await this.vendorDecisionDatasource.getPendingPayByReference(vendorId, reference)
             if(!pendingPayData) throw new NotFoundError('Transaction does not exist')
-            const payDate = moment(pendingPayData.vendorPayDate).format('YY:MM:DD')
+            const payDate = moment(pendingPayData.vendorPayDate).format('YY-MM-DD')
             return { "pay-date": payDate }
         } catch (error) {
             throw error

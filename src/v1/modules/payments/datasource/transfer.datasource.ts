@@ -17,7 +17,7 @@ class TransferDatasource {
         await this.transferRepository.save(transfer)
     }
     async checkInitialTransfer(orderReference: string, vendorId: string){
-        return await this.transferRepository.findOne({ where: {orderReference, vendorId, percentagePaid: '60'}})
+        return await this.transferRepository.findOne({ where: {orderReference, vendorId}})
     }
     async updateTransferStatus(data: any, reference: string){
         await this.transferRepository.update({orderReference: reference}, {additionalInfo: data})

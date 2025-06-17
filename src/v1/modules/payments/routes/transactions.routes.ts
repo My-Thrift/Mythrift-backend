@@ -10,7 +10,7 @@ const transactionsRouter = express.Router()
 const transactionsRouterController = container.resolve(TransactionsRouterController)
 
 transactionsRouter
-.post('/initialize-payment', [authMiddleware,requestValidator(TransactionsDto)], transactionsRouterController.initPayment.bind(transactionsRouterController))
+.post('/initialize-payment', [authMiddleware, requestValidator(TransactionsDto)], transactionsRouterController.initPayment.bind(transactionsRouterController))
 
 
 export default transactionsRouter

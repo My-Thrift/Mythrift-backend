@@ -9,7 +9,6 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction)=
     if(!token) throw new UnauthorizedError('Access denied. No token provided.')
     
     const apiKey = appConfig.app.apiKey
-    console.log(apiKey, token)
     if(token !== apiKey){
     throw new UnauthorizedError('Invalid token provided') 
     }

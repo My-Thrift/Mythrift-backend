@@ -14,7 +14,7 @@ class TransferRecipientDatasource {
     async createRecipient(data: Recipients){
        return await this.recipientDatasource.save(data)
     }
-    async findRecipient(accountNumber: string){
+    async findRecipientByAccountNumber(accountNumber: string){
         return await this.recipientDatasource.findOne({ where:{accountNumber} })
     }
     async findRecipientByVendorId(vendorId: string){

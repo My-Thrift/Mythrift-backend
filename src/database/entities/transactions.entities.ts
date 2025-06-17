@@ -1,4 +1,5 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { TransactionStatus, VendorDecision } from '../enums/enums.database'
 
 @Entity()
 class Transactions {
@@ -30,11 +31,11 @@ class Transactions {
     @Column({type: 'int', nullable: true})
     deliveryFee!: number
 
-    @Column({type: 'varchar', default: 'pending'})
-    paymentStatus!: string
+    @Column({type: 'enum', enum: TransactionStatus, default: TransactionStatus.pending})
+    paymentStatus!: TransactionStatus
   
-    @Column({type: 'varchar', default: 'pending'})
-    vendorStatus!: string
+    @Column({type: 'enum', enum: VendorDecision, default: VendorDecision.pending})
+    vendorStatus!: VendorDecision
 
     @Column({type: 'int'})
     amount!: number

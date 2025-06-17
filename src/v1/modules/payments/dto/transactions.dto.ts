@@ -65,5 +65,9 @@ export class TransactionsDto {
     @IsString()
     @IsOptional()
     draftToken!: string
+
+    @IsString()
+    @IsOptional()
+    walletId?: string
     
 }

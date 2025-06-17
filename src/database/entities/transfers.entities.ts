@@ -15,15 +15,6 @@ class Transfers {
     @Column({type: 'varchar'})
     vendorId!: string
 
-    @Column({type: 'boolean'})
-    transactionCompleted!: Boolean
-
-    @Column({type: 'int'})
-    amountLeft!: number
-
-    @Column({type: 'varchar'})
-    percentagePaid!: string
-
     @Column({ name: "additionalInfo", type: 'jsonb', nullable: true})
     additionalInfo!: any
 

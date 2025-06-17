@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { TransactionsDto } from "../dto/transactions.dto";
 import { inject, injectable } from "tsyringe";
 import TransactionsService from "../services/transactions.services";
+import SuccessResponse from "../../../../shared/utils/response.utils";
 
 
 @injectable()
@@ -11,7 +12,7 @@ class TransactionsRouterController {
         try {
             const data = req.body as TransactionsDto
             const response = await this.transactionsService.initPayment(data)
-            return res.status(200).json(response)
+            return res.status(200).json(SuccessResponse('Payment initialized', response))
         } catch (error) {
             next(error)
         }

@@ -4,9 +4,9 @@ import { container } from 'tsyringe';
 
 const walletDatasource = container.resolve(WalletDatasource);
 
-cron.schedule('17 21 * * 1,2,5', async () => {
+cron.schedule('00 1 * * 2,4,6', async () => {
     try {
-        console.log('Running a task every Monday, Wednesday, and Friday at 9:00 PM');
+        console.log('Running a task every Tuesday, Thursday, and Saturday at 1:00 AM');
         await walletDatasource.updateWalletBalanceFromPendingBalance();
         console.log('Wallet balance update task completed successfully.');
     } catch (error) {

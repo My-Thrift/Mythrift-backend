@@ -31,7 +31,7 @@ export const AppDatasource = new DataSource({
     WalletTransaction,
     Customer
 ],
-    logging: true,
+    logging: false,
     synchronize: false,
     dropSchema: false,
     migrations: [appConfig.database.migration],

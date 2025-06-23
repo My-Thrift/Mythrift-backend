@@ -22,7 +22,8 @@ const appConfig = {
         base_url: process.env.PAYSTACK_BASE_URL as string
     },
     cloud: {
-        cloud_url: process.env.CLOUD_URL as string,
+        stock_cloud_url: process.env.CLOUD_STOCK_URL as string,
+        wallet_cloud_url: process.env.CLOUD_WALLET_URL as string,
         cloud_secret: process.env.CLOUD_SECRET_KEY as string
     }
 }

@@ -14,6 +14,8 @@ import { payoutDays } from "../../../../config/days.config";
 import WalletTransaction from "../../../../database/entities/wallet-transactions.entities";
 import Wallet from "../../../../database/entities/wallet.entities";
 import emitWalletUpdate from "../../../../shared/socket/emit.socket";
+import { cloudWebhook } from "../../../../shared/cloud/webhook.cloud";
+import appConfig from "../../../../config/app.config";
 
 @injectable()
 class VendorDecisionService {
@@ -59,7 +61,7 @@ class VendorDecisionService {
 
                 const saveWallet = await this.walletDatasource.saveWallet(findUserWallet)
                 const {myThriftId, balance, pendingBalance}= saveWallet
-                emitWalletUpdate(myThriftId, {balance, pendingBalance})
+                cloudWebhook(appConfig.cloud.wallet_cloud_url, {myThriftId, balance, pendingBalance})
                 await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
                 return await this.transactionsDatasource.saveRefundDetails(newRefund)
             }
@@ -98,7 +100,7 @@ class VendorDecisionService {
             const {myThriftId, pendingBalance, balance} = saveWallet
             await this.vendorDecisionDatasource.updateVendorStatus(orderReference, VendorDecision.accepted)
             await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
-            emitWalletUpdate(myThriftId, {balance, pendingBalance})
+            cloudWebhook(appConfig.cloud.wallet_cloud_url, {myThriftId, balance, pendingBalance})
             return await this.vendorDecisionDatasource.newPendingPay(newPendingPay)
         } catch (error) {
             throw error

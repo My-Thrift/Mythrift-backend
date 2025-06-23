@@ -9,6 +9,8 @@ import moment from "moment-timezone";
 import WalletTransaction from "../../../../database/entities/wallet-transactions.entities";
 import { TransactionStatus } from "../../../../database/enums/enums.database";
 import emitWalletUpdate from "../../../../shared/socket/emit.socket";
+import { cloudWebhook } from "../../../../shared/cloud/webhook.cloud";
+import appConfig from "../../../../config/app.config";
 
 
 @injectable()
@@ -59,7 +61,7 @@ class DeliveryStatusService {
             }
             const saveWallet = await this.walletDatasource.saveWallet(findWallet)
             const { myThriftId, balance, pendingBalance} = saveWallet
-            emitWalletUpdate(myThriftId, {balance, pendingBalance})
+            cloudWebhook(appConfig.cloud.wallet_cloud_url, {myThriftId, balance, pendingBalance})
             await this.vendorDecisionDatasource.updateDeliveryStatus(reference, status)
             return await this.transactionsDatasource.updateDeliveryStatus(reference, status)
         } catch (error) {

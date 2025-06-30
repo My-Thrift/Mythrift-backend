@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "npm run migration:run && dist/server.js",
     "typeorm": "typeorm",
     "migration:generate": "npm run typeorm -- migration:generate -d dist/database/index.js",
     "migration:run": "npm run typeorm -- migration:run      -d dist/database/index.js",

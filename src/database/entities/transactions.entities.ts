@@ -25,10 +25,10 @@ class Transactions {
     @Column({type: 'varchar'})
     reference!: string
 
-    @Column({type: 'int'})
+    @Column({type: 'numeric', nullable: true})
     serviceFee!: number
 
-    @Column({type: 'int', nullable: true})
+    @Column({ type: 'numeric', precision: 10, nullable: true, default: 0})
     deliveryFee!: number
 
     @Column({type: 'enum', enum: TransactionStatus, default: TransactionStatus.pending})
@@ -37,7 +37,7 @@ class Transactions {
     @Column({type: 'enum', enum: VendorDecision, default: VendorDecision.pending})
     vendorStatus!: VendorDecision
 
-    @Column({type: 'int'})
+    @Column({type: 'numeric', nullable: true})
     amount!: number
 
     @Column({type: 'jsonb'})

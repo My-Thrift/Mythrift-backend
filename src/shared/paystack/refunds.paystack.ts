@@ -12,7 +12,6 @@ const refundTransaction = async (reference: string, amount: number)=>{
         const response = await axios.post(`${appConfig.paystack.base_url}/refund`,
             {
                 "transaction": reference,
-                "amount": amount*100
             },
             {
                 headers: {

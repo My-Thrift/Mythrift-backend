@@ -9,7 +9,7 @@ class WalletTransaction {
     @PrimaryGeneratedColumn('uuid')
     readonly id!: string
 
-    @Column({ type: 'numeric', nullable: true})
+    @Column({ type: 'numeric'})
     amount!: number
 
     @Column({ type: 'varchar'})

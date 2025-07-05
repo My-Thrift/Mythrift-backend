@@ -1,4 +1,4 @@
 {
     "watch": ["src"],
-    "exec": "tsc && npm start"
+    "exec": "npm run build && npm start"
 }

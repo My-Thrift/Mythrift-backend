@@ -41,11 +41,11 @@ class VendorDecisionService {
             if(findTransaction.vendorStatus !== 'pending' || findTransaction.paymentStatus !=='success') throw new ForbidenError('You cannot take this action')
             if(vendorStatus === 'declined') {
                 const amount = findTransaction.amount //- (findTransaction.serviceFee + findTransaction.deliveryFee)
-                const refund = await refundTransaction(orderReference, findTransaction.amount)
+               // const refund = await refundTransaction(orderReference, findTransaction.amount)
                 const newRefund = new Refunds()
                 newRefund.orderReference = orderReference
                 newRefund.amountRefunded = amount
-                newRefund.additionalInfo = refund
+                newRefund.additionalInfo = findTransaction
                 await this.vendorDecisionDatasource.updateVendorStatus(orderReference, VendorDecision.declined)
 
                 findUserWallet.balance += amount

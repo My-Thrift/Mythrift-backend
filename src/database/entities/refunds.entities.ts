@@ -12,7 +12,7 @@ class Refunds {
     @Column({type: 'uuid'})
     orderReference!: string
 
-    @Column({ type: 'int'})
+    @Column({ type: 'numeric'})
     amountRefunded!: number
 
     @Column({type: "jsonb", nullable: true})

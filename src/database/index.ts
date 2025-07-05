@@ -32,9 +32,8 @@ export const AppDatasource = new DataSource({
     Customer
 ],
     logging: false,
-    synchronize: false,
-    dropSchema: false,
+    synchronize: true,
+    dropSchema: true,
     migrations: [appConfig.database.migration],
 
 })
-console.log('Loading migrations from:', AppDatasource.options.migrations);

@@ -15,10 +15,10 @@ class Wallet {
     @Column({type: 'varchar'})
     myThriftId!: string
 
-    @Column({type: 'int'})
+    @Column({type: 'numeric'})
     balance!: number
 
-    @Column({type: 'int'})
+    @Column({type: 'numeric'})
     pendingBalance!: number
 
     @Column({type: 'varchar'})

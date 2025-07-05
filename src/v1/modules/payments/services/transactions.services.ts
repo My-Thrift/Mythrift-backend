@@ -13,6 +13,7 @@ import initializeTransaction from "../../../../shared/paystack/transaction.payst
 import Wallet from "../../../../database/entities/wallet.entities";
 import Transactions from "../../../../database/entities/transactions.entities";
 import emitWalletUpdate from "../../../../shared/socket/emit.socket";
+import { cloudWebhook } from "../../../../shared/cloud/webhook.cloud";
 
 @injectable()
 class TransactionsService {
@@ -45,7 +46,7 @@ class TransactionsService {
                 await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
                 const saveWalet = await this.walletDatasource.saveWallet(findWallet)
                 const {myThriftId, pendingBalance, balance} = saveWalet
-                emitWalletUpdate(myThriftId, {balance, pendingBalance})
+                cloudWebhook(appConfig.cloud.wallet_cloud_url, {myThriftId, balance, pendingBalance})
                 return await this.transactionsDatasource.initPayment({...data, reference: reference, paymentStatus: TransactionStatus.success, vendorStatus: 'pending', orderDelivered: false})
             }
 
@@ -81,7 +82,7 @@ class TransactionsService {
 
                await this.walletDatasource.saveWallet(findWallet)
                const { balance, pendingBalance} = findWallet
-               emitWalletUpdate(findWallet.myThriftId, {balance, pendingBalance})
+               await cloudWebhook(appConfig.cloud.wallet_cloud_url, {myThriftId: findWallet.myThriftId, balance, pendingBalance})
                return await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
             }
 
@@ -93,16 +94,7 @@ class TransactionsService {
                 event: 'charge.success',
                 data: update
             }
-            const signature = generateSignature(JSON.stringify(payload))
-            await axios.post(appConfig.cloud.cloud_url, 
-                payload,
-                {
-                    headers:{
-                        "x-mythrift": signature,
-                        'Content-Type': 'application/json',
-                    }
-                }
-            )
+            cloudWebhook(appConfig.cloud.stock_cloud_url, payload)
         } catch (error) {
             throw error
         }

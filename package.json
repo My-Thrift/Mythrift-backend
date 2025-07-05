@@ -5,8 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
-    "build": "npm install --omit=dev && tsc",
-    "start": "npm run migration:run && node dist/server.js",
+    "build": "tsc",
+    "start": "node dist/server.js",
     "typeorm": "typeorm",
     "migration:generate": "npm run typeorm -- migration:generate -d dist/database/index.js",
     "migration:run": "npm run typeorm -- migration:run      -d dist/database/index.js",

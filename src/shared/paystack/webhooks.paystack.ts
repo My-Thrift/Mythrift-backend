@@ -13,16 +13,17 @@ class PaystackWebhooks {
     ){}
     async webhooks(req: Request, res: Response, next: NextFunction):Promise<any>{
         try {
-            const event = req.body
 
+        const event = req.body
         const secretKey = appConfig.paystack.api_key
         const hash = req.headers['x-paystack-signature'];
 
         const computedHash = crypto
         .createHmac('sha512', secretKey)
         .update(JSON.stringify(event))
-        .digest('hex');
-
+        .digest('hex');  
+        if (computedHash !== hash) return res.status(400).send('Invalid signature');
+        
         switch(event.event){
             case 'charge.success':
                 await this.transactionsService.updateSuccessfulPaymentStatus(event.data)

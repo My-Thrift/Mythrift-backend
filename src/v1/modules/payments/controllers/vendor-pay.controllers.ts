@@ -35,6 +35,7 @@ class VendorPayController {
             next(error)
         }
     }
+
     async vendorTransactionHistory(req: Request, res: Response, next: NextFunction): Promise<any>{
         try {
             const data = req.query as { vendorId: string, startDate: string, endDate: string }

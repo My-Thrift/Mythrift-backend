@@ -14,6 +14,8 @@ import { TransactionStatus } from "../../../../database/enums/enums.database";
 import Recipients from "../../../../database/entities/recipients.entities";
 import Wallet from "../../../../database/entities/wallet.entities";
 import emitWalletUpdate from "../../../../shared/socket/emit.socket";
+import appConfig from "../../../../config/app.config";
+import { cloudWebhook } from "../../../../shared/cloud/webhook.cloud";
 
 
 @injectable()
@@ -60,7 +62,7 @@ class VendorPayService {
             
             const saveWallet = await this.walletDatasource.saveWallet(findWallet)
             const { balance, pendingBalance} = saveWallet
-            emitWalletUpdate(findWallet.myThriftId, {balance, pendingBalance})
+            cloudWebhook(appConfig.cloud.wallet_cloud_url, {myThriftId: findWallet.myThriftId, balance, pendingBalance})
             return await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
         } catch (error) {
             throw error

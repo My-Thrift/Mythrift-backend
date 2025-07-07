@@ -24,12 +24,10 @@ export class TransactionsDto {
     note?: string
 
     @IsString()
-    @Length(3,10)
     @IsNotEmpty()
     firstName!: string
 
     @IsString()
-    @Length(3,15)
     @IsNotEmpty()
     lastName!: string
 

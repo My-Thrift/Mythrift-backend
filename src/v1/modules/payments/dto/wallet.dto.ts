@@ -3,11 +3,9 @@ import { IsEmail, isEmail, IsString, Length } from "class-validator";
 
 export class CreateWalletDto {
     @IsString()
-    @Length(3,12)
     firstName!: string
 
     @IsString()
-    @Length(3,12)
     lastName!: string
 
     @IsString()

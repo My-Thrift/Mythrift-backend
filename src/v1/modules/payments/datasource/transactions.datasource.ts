@@ -45,7 +45,7 @@ class TransactionsDatasource {
         await this.transactionsRepository.update({reference}, {orderDelivered})
         return await this.transactionsRepository.findOne({where:{reference}})
     }
-    async getTransactionHistory(vendorId: string, startDate: Date, endDate: Date) {
+    async getTransactionHistory(vendorId: string, startDate: Date, endDate: Date) { // depreciated
         return await this.transfersRepository
           .createQueryBuilder("transfers")
           .where("transfers.vendorId = :vendorId", { vendorId })
@@ -57,7 +57,10 @@ class TransactionsDatasource {
             }
           )
           .getMany();
-      }
+    }
+    async getRevenue(vendorId: string){
+        return await this.transactionsRepository.find({ where: { vendorId, paymentStatus: TransactionStatus.success, vendorStatus: VendorDecision.accepted, orderDelivered: true}})
+    }
       
 }
 

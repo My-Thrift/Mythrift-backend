@@ -12,3 +12,7 @@ export class RequestPayoutDto {
     @IsNumber()
     payoutAmount!: number
 }
+
+export class RevenueDto {
+    vendorId!: string
+}

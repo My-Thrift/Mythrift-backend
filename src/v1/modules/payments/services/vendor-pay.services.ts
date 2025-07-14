@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { RequestPayoutDto } from "../dto/vendor-pay.dto";
+import { RequestPayoutDto, RevenueDto } from "../dto/vendor-pay.dto";
 import WalletDatasource from "../datasource/wallet.datasource";
 import { BadRequestError, ForbidenError, UnauthorizedError } from "../../../../shared/middleware/error-handler.middleware";
 import moment from "moment-timezone";
@@ -16,12 +16,14 @@ import Wallet from "../../../../database/entities/wallet.entities";
 import emitWalletUpdate from "../../../../shared/socket/emit.socket";
 import appConfig from "../../../../config/app.config";
 import { cloudWebhook } from "../../../../shared/cloud/webhook.cloud";
+import TransactionsDatasource from "../datasource/transactions.datasource";
 
 
 @injectable()
 class VendorPayService {
     constructor(
         @inject(WalletDatasource) private walletDatasource: WalletDatasource,
+        @inject(TransactionsDatasource) private transactionsDatasource: TransactionsDatasource,
         @inject(TransferRecipientDatasource) private transferRecipientDatasource: TransferRecipientDatasource
     ){}
 
@@ -64,6 +66,13 @@ class VendorPayService {
             const { balance, pendingBalance} = saveWallet
             cloudWebhook(appConfig.cloud.wallet_cloud_url, {myThriftId: findWallet.myThriftId, balance, pendingBalance})
             return await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
+        } catch (error) {
+            throw error
+        }
+    }
+    async vendorRevenue(vendorId: string){
+        try {
+            return await this.transactionsDatasource.getRevenue(vendorId)
         } catch (error) {
             throw error
         }

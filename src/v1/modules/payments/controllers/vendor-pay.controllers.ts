@@ -1,10 +1,10 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, response, Response } from "express";
 import { inject, injectable } from 'tsyringe'
 import VendorPayDateHelper from "../../../../shared/helpers/vendor-pay-date.helper";
 import { BadRequestError } from "../../../../shared/middleware/error-handler.middleware";
 import VendorPayHelper from "../../../../shared/helpers/vendor-pay.helper";
 import moment from "moment-timezone";
-import { RequestPayoutDto } from "../dto/vendor-pay.dto";
+import { RequestPayoutDto, RevenueDto } from "../dto/vendor-pay.dto";
 import VendorPayService from "../services/vendor-pay.services";
 import SuccessResponse from "../../../../shared/utils/response.utils";
 
@@ -54,6 +54,17 @@ class VendorPayController {
             const data = req.body as RequestPayoutDto
             const response = await this.vendorPayService.requestPayout(data)
             return res.status(200).json(SuccessResponse('Payout request successful', response))
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async vendorRevenue(req: Request, res: Response, next: NextFunction): Promise<any>{
+        try {
+            const vendorId = req.params.id as string
+            if(!vendorId) throw new BadRequestError('Please provide vendor Id')
+            const response = await this.vendorPayService.vendorRevenue(vendorId)
+            return res.status(200).json(SuccessResponse('Vendor Revenue', response))
         } catch (error) {
             next(error)
         }

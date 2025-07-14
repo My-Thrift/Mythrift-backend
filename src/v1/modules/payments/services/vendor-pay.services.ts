@@ -17,6 +17,8 @@ import emitWalletUpdate from "../../../../shared/socket/emit.socket";
 import appConfig from "../../../../config/app.config";
 import { cloudWebhook } from "../../../../shared/cloud/webhook.cloud";
 import TransactionsDatasource from "../datasource/transactions.datasource";
+import { Transaction } from "typeorm";
+import Transactions from "../../../../database/entities/transactions.entities";
 
 
 @injectable()
@@ -72,7 +74,18 @@ class VendorPayService {
     }
     async vendorRevenue(vendorId: string){
         try {
-            return await this.transactionsDatasource.getRevenue(vendorId)
+
+            const find: Transactions[] | null = await this.transactionsDatasource.getRevenue(vendorId)
+            if(!find) return 0
+
+            let revenue = 0 
+            for(let i=0; i<= find.length; i++){
+                if(!find[i].deliveryFee) find[i].deliveryFee = 0
+                const vendorRevenue: number = find[i].amount - (find[i].serviceFee + find[i].deliveryFee)
+                revenue+=vendorRevenue
+            }
+
+            return { vendorRevenue: revenue }
         } catch (error) {
             throw error
         }

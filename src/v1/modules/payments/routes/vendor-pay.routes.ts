@@ -11,5 +11,5 @@ vendorPayRouter
 .get('/pay-date', authMiddleware,vendorPayController.getPayDate.bind(vendorPayController))
 .post('/request-payout', [authMiddleware, requestValidator(RequestPayoutDto)], vendorPayController.requestPayout.bind(vendorPayController))
 .get('/transaction-percentages', authMiddleware, vendorPayController.getPayPercentages.bind(vendorPayController))
-.get('/vendor-revenue', [authMiddleware], vendorPayController.vendorRevenue.bind(vendorPayController) )
+.get('/vendor-revenue/:id', [authMiddleware], vendorPayController.vendorRevenue.bind(vendorPayController) )
 export default vendorPayRouter

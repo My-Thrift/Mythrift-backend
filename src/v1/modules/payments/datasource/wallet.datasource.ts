@@ -1,9 +1,11 @@
 import { injectable } from "tsyringe";
-import { Repository } from "typeorm";
+import { MoreThan, Repository } from "typeorm";
 import Customer from "../../../../database/entities/customer.entities";
 import { AppDatasource } from "../../../../database";
 import Wallet from "../../../../database/entities/wallet.entities";
 import WalletTransaction from "../../../../database/entities/wallet-transactions.entities";
+import { cloudWebhook } from "../../../../shared/cloud/webhook.cloud";
+import appConfig from "../../../../config/app.config";
 
 @injectable()
 class WalletDatasource {
@@ -52,6 +54,18 @@ class WalletDatasource {
         })
         .where('"pendingBalance" > 0')
         .execute();
+
+        const find = await this.walletRepository.find({ where: { pendingBalance: 0, balance: MoreThan(0) }})
+        let sorted: Array<any> = find.map((wallet) => {
+            return {
+                myThriftId: wallet.myThriftId,
+                balance: wallet.balance,
+                pendingBalance: wallet.pendingBalance,
+                walletId: wallet.id
+            };
+        });
+        
+        cloudWebhook(appConfig.cloud.wallet_cloud_url, sorted)
     }
 }
 

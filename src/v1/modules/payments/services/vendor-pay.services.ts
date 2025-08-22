@@ -74,14 +74,13 @@ class VendorPayService {
     }
     async vendorRevenue(vendorId: string){
         try {
-            console.log(vendorId)
+           
             const find: Transactions[] | null = await this.transactionsDatasource.getRevenue(vendorId)
-            console.log(find)
             if(find.length === 0) return 0
     
             let revenue = 0 
             for(let i=0; i<find.length; i++){
-                console.log(find[i].amount)
+              
                 if(!find[i].deliveryFee) find[i].deliveryFee = 0
                 const vendorRevenue: number = find[i].amount - (find[i].serviceFee)
                 revenue+=vendorRevenue

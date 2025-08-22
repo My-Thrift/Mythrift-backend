@@ -72,11 +72,12 @@ class VendorDecisionService {
             const { amount, serviceFee, deliveryFee, isStockpile, reference} = findTransaction
 
             const pay = amount - (serviceFee + deliveryFee)
-            const multiplier = isStockpile ? 1 : 0.6
+          //  const multiplier = isStockpile ? 1 : 0.6
             
             const field = payoutDays.includes(today.getDay()) ? 'pendingBalance' : 'balance'
-            findVendorWallet[field] += (pay*multiplier)
+            findVendorWallet[field] += pay
 
+            // not in use
             const newPendingPay = new PendingPayments()
             newPendingPay.isStockpile = findTransaction.isStockpile
             newPendingPay.orderDelivered = false
@@ -87,9 +88,10 @@ class VendorDecisionService {
             newPendingPay.orderReference = orderReference
             newPendingPay.vendorId = vendorId
 
+            // in use
             const newWalletTransaction = new WalletTransaction()
-            newWalletTransaction.amount = pay*multiplier
-            newWalletTransaction.amountSlug = `+${pay*multiplier}`
+            newWalletTransaction.amount = pay
+            newWalletTransaction.amountSlug = `+${pay}`
             newWalletTransaction.reason = `New order on your My Thrift store`
             newWalletTransaction.status = TransactionStatus.success
             newWalletTransaction.transactionReference = reference

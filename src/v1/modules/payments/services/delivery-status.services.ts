@@ -33,35 +33,36 @@ class DeliveryStatusService {
             const { createdAt, amount, deliveryFee, serviceFee }  = transaction
             const transactionDate = moment(createdAt).format('YY-MM-DD')
 
-            const findWallet = await this.walletDatasource.findWalletByVendorId(vendorId)
-            if(!findWallet) throw new ForbidenError('You need to create a wallet first')
+            // const findWallet = await this.walletDatasource.findWalletByVendorId(vendorId)
+            // if(!findWallet) throw new ForbidenError('You need to create a wallet first')
        
             if(transaction.vendorStatus !== 'accepted') throw new ForbidenError('You cannot perform this action')
             if(transaction.orderDelivered) throw new ForbidenError('This action has already been taking')
-            console.log('Today is the ',today)
-            console.log('Transaction date is ',transactionDate)
-            if(!transaction.isStockpile){
-                const fortyPercentPay = (amount - (serviceFee + deliveryFee))*0.4
-                let field: 'balance' | 'pendingBalance';
-                if(today === transactionDate && payoutDays.includes(getDay)){  // vendor marking delivered on a payout day the same day he got the order
-                    field = 'pendingBalance';
-                } else {
-                    field = 'balance';
-                }
-                findWallet[field] += fortyPercentPay;
-                const newWalletTransaction = new WalletTransaction()
-                newWalletTransaction.amount = fortyPercentPay
-                newWalletTransaction.amountSlug = `+${fortyPercentPay}`
-                newWalletTransaction.reason = `Fulfilled My Thrift order`
-                newWalletTransaction.status = TransactionStatus.success
-                newWalletTransaction.transactionReference = reference
-                newWalletTransaction.wallet = findWallet
-                newWalletTransaction.myThriftId = vendorId
-                await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
-            }
-            const saveWallet = await this.walletDatasource.saveWallet(findWallet)
-            const { myThriftId, balance, pendingBalance} = saveWallet
-            cloudWebhook(appConfig.cloud.wallet_cloud_url, {myThriftId, balance, pendingBalance})
+            
+            // if(!transaction.isStockpile){
+            //     const fortyPercentPay = (amount - (serviceFee + deliveryFee))*0.4
+            //     let field: 'balance' | 'pendingBalance';
+            //     if(today === transactionDate && payoutDays.includes(getDay)){  // vendor marking delivered on a payout day the same day he got the order
+            //         field = 'pendingBalance';
+            //     } else {
+            //         field = 'balance';
+            //     }
+            //     findWallet[field] += fortyPercentPay;
+            //     const newWalletTransaction = new WalletTransaction()
+            //     newWalletTransaction.amount = fortyPercentPay
+            //     newWalletTransaction.amountSlug = `+${fortyPercentPay}`
+            //     newWalletTransaction.reason = `Fulfilled My Thrift order`
+            //     newWalletTransaction.status = TransactionStatus.success
+            //     newWalletTransaction.transactionReference = reference
+            //     newWalletTransaction.wallet = findWallet
+            //     newWalletTransaction.myThriftId = vendorId
+            //     await this.walletDatasource.saveWalletTransaction(newWalletTransaction)
+            // }
+
+            // const saveWallet = await this.walletDatasource.saveWallet(findWallet)
+            // const { myThriftId, balance, pendingBalance} = saveWallet
+            // cloudWebhook(appConfig.cloud.wallet_cloud_url, {myThriftId, balance, pendingBalance})
+
             await this.vendorDecisionDatasource.updateDeliveryStatus(reference, status)
             return await this.transactionsDatasource.updateDeliveryStatus(reference, status)
         } catch (error) {

@@ -23,8 +23,9 @@ class TransactionsService {
     ){}
     async initPayment(data: TransactionsDto):Promise<Transactions | any> {
         try {
-            const { amount, email, firstName, lastName, walletId, userId} = data
+            const { email, firstName, lastName, walletId, userId} = data
             const reference = uuidGenerator()
+            const amount = Math.round(data.amount)
             const reqBody = { amount: amount*100 , email, firstName, lastName, reference}
 
             if(walletId){ 

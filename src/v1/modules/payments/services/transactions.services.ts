@@ -63,6 +63,7 @@ class TransactionsService {
     async updateSuccessfulPaymentStatus(data: any, event?: string){
         try {
             if(data.metadata.receiver_account_number){
+                console.log(data.metadata)
                 if(data.metadata.platform == "QPAY" && data.metadata.role == "USER"){
                     console.log('hit qpay')
                    return await qpayWebhook(appConfig.qpay.qpay_url, {event, data})

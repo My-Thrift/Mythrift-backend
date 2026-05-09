@@ -25,6 +25,11 @@ const appConfig = {
         stock_cloud_url: process.env.CLOUD_STOCK_URL as string,
         wallet_cloud_url: process.env.CLOUD_WALLET_URL as string,
         cloud_secret: process.env.CLOUD_SECRET_KEY as string
+    },
+    qpay:{
+        qpay_url: process.env.QPAY_URL as string,
+        qpay_secret: process.env.QPAY_SECRET_KEY as string,
+        qpay_api_key: process.env.QPAY_API_KEY as string
     }
 }
 

@@ -4,6 +4,7 @@ import crypto from 'crypto'
 import TransactionsService from "../../v1/modules/payments/services/transactions.services";
 import { container, inject, injectable } from "tsyringe";
 import TransferService from "../../v1/modules/payments/services/transfer.services";
+import { qpayWebhook } from "../cloud/webhook.cloud";
 
 @injectable()
 class PaystackWebhooks {
@@ -26,7 +27,7 @@ class PaystackWebhooks {
         
         switch(event.event){
             case 'charge.success':
-                await this.transactionsService.updateSuccessfulPaymentStatus(event.data)
+                await this.transactionsService.updateSuccessfulPaymentStatus(event.data, event.event)
                 break;
               case 'transfer.failure':
                 await this.transferService.updateTransferStatus(event.data)
@@ -39,6 +40,13 @@ class PaystackWebhooks {
                 break;
               case 'refund.failed':
                 await this.transactionsService.updateRefundStatus(event.data)
+                case 'customeridentification.failed': 
+                break;
+              case 'customeridentification.failed': 
+                await qpayWebhook(appConfig.qpay.qpay_url, event)
+                break;
+              case 'customeridentification.success': 
+                await qpayWebhook(appConfig.qpay.qpay_url, event)
                 break;
         }
 

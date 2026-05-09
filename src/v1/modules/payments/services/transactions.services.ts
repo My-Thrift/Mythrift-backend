@@ -13,7 +13,7 @@ import initializeTransaction from "../../../../shared/paystack/transaction.payst
 import Wallet from "../../../../database/entities/wallet.entities";
 import Transactions from "../../../../database/entities/transactions.entities";
 import emitWalletUpdate from "../../../../shared/socket/emit.socket";
-import { cloudWebhook } from "../../../../shared/cloud/webhook.cloud";
+import { cloudWebhook, qpayWebhook } from "../../../../shared/cloud/webhook.cloud";
 
 @injectable()
 class TransactionsService {
@@ -60,9 +60,12 @@ class TransactionsService {
             throw error
         }
     }
-    async updateSuccessfulPaymentStatus(data: any){
+    async updateSuccessfulPaymentStatus(data: any, event?: string){
         try {
             if(data.metadata.receiver_account_number){
+                if(data.metadata.platform == "QPAY" && data.metadata.role == "USER"){
+                   return await qpayWebhook(appConfig.qpay.qpay_url, {event, data})
+                }
                 const amount = data.amount/100
                 const accountNumber = data.metadata.receiver_account_number
                 const reference = data.reference

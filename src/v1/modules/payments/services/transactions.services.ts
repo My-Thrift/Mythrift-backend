@@ -63,12 +63,12 @@ class TransactionsService {
     async updateSuccessfulPaymentStatus(data: any, event?: string){
         try {
             if(data.metadata.receiver_account_number){
-                console.log(data)
-                if(data.metadata.platform == "QPAY" && data.metadata.role == "USER"){
+       
+                if(data.customer.metadata.platform == "QPAY"){
                     console.log('hit qpay')
                    return await qpayWebhook(appConfig.qpay.qpay_url, {event, data})
                 }
-                 console.log('left qpay')
+       
                 const amount = data.amount/100
                 const accountNumber = data.metadata.receiver_account_number
                 const reference = data.reference

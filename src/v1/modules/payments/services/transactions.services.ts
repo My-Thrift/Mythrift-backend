@@ -64,8 +64,10 @@ class TransactionsService {
         try {
             if(data.metadata.receiver_account_number){
                 if(data.metadata.platform == "QPAY" && data.metadata.role == "USER"){
+                    console.log('hit qpay')
                    return await qpayWebhook(appConfig.qpay.qpay_url, {event, data})
                 }
+                 console.log('left qpay')
                 const amount = data.amount/100
                 const accountNumber = data.metadata.receiver_account_number
                 const reference = data.reference

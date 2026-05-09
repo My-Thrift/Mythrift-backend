@@ -35,6 +35,7 @@ export const qpayWebhook = async (url: string, payload: any)=>{
                 }
             }
         )
+        console.log("sent qpay")
     } catch (error) {
         console.error(error)
     }

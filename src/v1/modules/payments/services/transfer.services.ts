@@ -85,6 +85,8 @@ class TransferService {
     // }
     async updateTransferStatus(data: any){
         try {
+            const findTransfer = await this.transferDatasource.findTransferByReference(data.reference)
+            if(!findTransfer) return
             await this.transferDatasource.updateTransferStatus(data, data.reference)
         } catch (error) {
             throw error

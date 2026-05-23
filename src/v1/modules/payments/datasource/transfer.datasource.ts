@@ -13,6 +13,9 @@ class TransferDatasource {
     async findTransferByReferenceAndVendorId(reference: string, vendorId: string){
         return await this.transferRepository.findOne({where:{orderReference: reference, vendorId}})
     }
+     async findTransferByReference(reference: string){
+        return await this.transferRepository.findOne({where:{orderReference: reference}})
+    }
     async saveTransferDetails(transfer: Transfers){
         await this.transferRepository.save(transfer)
     }

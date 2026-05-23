@@ -15,6 +15,7 @@ import VendorPayHelper from './shared/helpers/vendor-pay.helper'
 import deliveryStatusRouter from './v1/modules/payments/routes/delivery-status.routes'
 import vendorPayRouter from './v1/modules/payments/routes/vendor-pay.routes'
 import walletRouter from './v1/modules/payments/routes/wallet.routes'
+import axios from 'axios'
 const app: Application = express()
 moment.tz.setDefault('Africa/Lagos')
 
@@ -39,6 +40,8 @@ app
 //     const incorrectRoute = req.originalUrl;
 //     const method = req.method;
 //     res.status(404).send({ status: false, message: `${method} Route: ${incorrectRoute} cannot be found`})
-// })
+// }) 
 .use(errorHandler)
+
+
 export default app

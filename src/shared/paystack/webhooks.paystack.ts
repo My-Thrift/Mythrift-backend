@@ -30,12 +30,15 @@ class PaystackWebhooks {
                 await this.transactionsService.updateSuccessfulPaymentStatus(event.data, event.event)
                 break;
               case 'transfer.failure':
+                await qpayWebhook(appConfig.qpay.qpay_url, event)
                 await this.transferService.updateTransferStatus(event.data)
                 break;
               case 'transfer.success':
+                await qpayWebhook(appConfig.qpay.qpay_url, event)
                 await this.transferService.updateTransferStatus(event.data)
                 break;
               case 'refund.processed':
+
                 await this.transactionsService.updateRefundStatus(event.data)
                 break;
               case 'refund.failed':

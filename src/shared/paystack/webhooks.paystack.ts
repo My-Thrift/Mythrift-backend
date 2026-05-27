@@ -51,6 +51,12 @@ class PaystackWebhooks {
               case 'customeridentification.success': 
                 await qpayWebhook(appConfig.qpay.qpay_url, event)
                 break;
+                 case 'direct_debit.authorization.active': 
+                await qpayWebhook(appConfig.qpay.qpay_url, event)
+                break;
+                 case 'direct_debit.authorization.created': 
+                await qpayWebhook(appConfig.qpay.qpay_url, event)
+                break;
         }
 
         res.sendStatus(200)

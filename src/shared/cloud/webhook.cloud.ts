@@ -24,6 +24,7 @@ export const cloudWebhook = async (url: string, payload: any)=>{
 
 export const qpayWebhook = async (url: string, payload: any)=>{
     try {
+
         const signature = generateSignature(JSON.stringify(payload), appConfig.qpay.qpay_secret)
         await axios.post(url, 
             payload,
@@ -35,7 +36,7 @@ export const qpayWebhook = async (url: string, payload: any)=>{
                 }
             }
         )
-        console.log("sent qpay")
+        console.log("sent qpay just about now")
     } catch (error) {
         console.error(error)
     }

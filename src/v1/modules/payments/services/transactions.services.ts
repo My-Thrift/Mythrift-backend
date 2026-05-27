@@ -64,8 +64,8 @@ class TransactionsService {
         try {
             if(data.metadata.receiver_account_number){
        
-                if(data.customer.metadata.platform == "QPAY"){
-                    console.log('hit qpay')
+                if(data.customer.metadata.platform === "QPAY"){
+               
                    return await qpayWebhook(appConfig.qpay.qpay_url, {event, data})
                 }
        
